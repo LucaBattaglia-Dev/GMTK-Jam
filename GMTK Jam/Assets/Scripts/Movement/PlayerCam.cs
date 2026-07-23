@@ -36,15 +36,6 @@ public class PlayerCam : MonoBehaviour
 
     private void Update()
     {
-        // Toggle cursor lock state on Escape press
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            if (isCursorUnlocked)
-                LockCursor();
-            else
-                UnlockCursor();
-        }
-
         // Only rotate camera if the cursor is locked (game is unpaused)
         if (!isCursorUnlocked)
         {
