@@ -58,10 +58,6 @@ public class PlayerMovement : MonoBehaviour
     private bool wallLeft;
     private bool wallRight;
 
-    // Platform tracking without parent re-assignment
-    private Transform currentPlatform;
-    private Vector3 lastPlatformPosition;
-
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -89,9 +85,6 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        // Moving platform position tracking (No SetParent used)
-        HandleMovingPlatform();
-
         if (state == MovementState.Sliding)
             SlideMovement();
         else if (state == MovementState.WallRunning)
@@ -202,15 +195,12 @@ public class PlayerMovement : MonoBehaviour
         state = MovementState.Sliding;
         slideTimer = maxSlideTime;
 
-        // Shrink CapsuleCollider height without touching Transform Scale
         col.height = slideColliderHeight;
         col.center = new Vector3(startColliderCenter.x, slideColliderHeight * 0.5f, startColliderCenter.z);
 
-        // Lower camera height
         if (playerCam != null)
             playerCam.SetSlide(true);
 
-        // Initial impulse forward + down onto floor
         Vector3 inputDir = transform.forward * verticalInput + transform.right * horizontalInput;
         rb.AddForce(inputDir.normalized * slideForce, ForceMode.Impulse);
         rb.AddForce(Vector3.down * 10f, ForceMode.Impulse);
@@ -222,18 +212,14 @@ public class PlayerMovement : MonoBehaviour
         Vector3 slideDirection = OnSlope() ? GetSlopeMoveDirection(inputDir) : inputDir.normalized;
 
         rb.AddForce(slideDirection * slideForce, ForceMode.Force);
-
-        // Keep player glued down
         rb.AddForce(Vector3.down * slideStickForce, ForceMode.Force);
     }
 
     private void StopSlide()
     {
-        // Restore CapsuleCollider
         col.height = startColliderHeight;
         col.center = startColliderCenter;
 
-        // Restore Camera position
         if (playerCam != null)
             playerCam.SetSlide(false);
 
@@ -257,28 +243,6 @@ public class PlayerMovement : MonoBehaviour
     public Vector3 GetSlopeMoveDirection(Vector3 direction)
     {
         return Vector3.ProjectOnPlane(direction, slopeHit.normal).normalized;
-    }
-
-    // --- MOVING PLATFORMS (NO PARENTING) ---
-    private void HandleMovingPlatform()
-    {
-        // Only apply platform movement to objects specifically tagged "MovingPlatform"
-        if (grounded && groundHit.transform != null && groundHit.transform.CompareTag("MovingPlatform"))
-        {
-            if (currentPlatform != groundHit.transform)
-            {
-                currentPlatform = groundHit.transform;
-                lastPlatformPosition = currentPlatform.position;
-            }
-
-            Vector3 platformDelta = currentPlatform.position - lastPlatformPosition;
-            rb.MovePosition(rb.position + platformDelta);
-            lastPlatformPosition = currentPlatform.position;
-        }
-        else
-        {
-            currentPlatform = null;
-        }
     }
 
     // --- WALL RUNNING ---
