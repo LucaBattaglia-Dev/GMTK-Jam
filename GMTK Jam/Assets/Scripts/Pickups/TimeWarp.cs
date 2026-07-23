@@ -4,12 +4,12 @@ public class TimeWarp : Pickup
 {
     [Header("Unique Parameters")]
     [SerializeField] private float newTimeScale; 
-
     public override void OnPickup(){
-        Time.timeScale = newTimeScale;
+        //Add slowing down trucks & player
+        LevelUIManager.Instance.InstantiateCooldownUI(this); 
     }
 
     public override void OnDespawn(){
-        Time.timeScale = 1f;
+        //Add slowing down trucks & player
     }
 }

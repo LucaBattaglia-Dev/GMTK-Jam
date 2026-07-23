@@ -6,6 +6,7 @@ using DG.Tweening;
 public class Pickup : MonoBehaviour
 {
     [SerializeField] public AudioClip pickupSFX; 
+    [SerializeField] public Sprite pickupIcon;
     [SerializeField] public float powerupDuration;
     private float currentDuration;
     public float CurrentDuration {get{return currentDuration;}}
@@ -25,6 +26,7 @@ public class Pickup : MonoBehaviour
         isActive = true;
         OnPickup();
         this.gameObject.GetComponent<MeshRenderer>().enabled = false; 
+        this.gameObject.GetComponent<Collider>().enabled = false;
     }
 
     public void PlaySFX(){
