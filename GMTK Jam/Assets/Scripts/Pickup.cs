@@ -11,6 +11,10 @@ public class Pickup : MonoBehaviour
     public float CurrentDuration {get{return currentDuration;}}
     private bool isActive = false; 
 
+    //Animation Params
+    private float floatDistance = 0.5f;
+    private float floatDuration = 2f;
+
     #region class methods
     void Start(){
         currentDuration = powerupDuration;
@@ -20,7 +24,7 @@ public class Pickup : MonoBehaviour
         PlaySFX();
         isActive = true;
         OnPickup();
-        //Turn off whatever's rendering it
+        this.gameObject.GetComponent<MeshRenderer>().enabled = false; 
     }
 
     public void PlaySFX(){
