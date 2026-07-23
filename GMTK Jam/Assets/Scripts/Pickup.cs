@@ -1,6 +1,8 @@
 using UnityEngine;
+using DG.Tweening;
 
 //TODO: finish code to turn off renderer
+//Parent class for pickups, also handles animating them
 public class Pickup : MonoBehaviour
 {
     [SerializeField] public AudioClip pickupSFX; 
