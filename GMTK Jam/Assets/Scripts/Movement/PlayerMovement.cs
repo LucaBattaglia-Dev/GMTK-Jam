@@ -14,10 +14,12 @@ public class PlayerMovement : MonoBehaviour
     public float airMultiplier = 0.4f;
 
     [Header("Sliding")]
+    public float airGracePeriod = 1f;
     public float maxSlideTime = 0.75f;
     public float slideForce = 400f;
     public float slideColliderHeight = 1f; // Half height collider during slide
     public float slideStickForce = 25f; // Keeps player glued to ground
+    private float airGraceTime;
     private float startColliderHeight;
     private Vector3 startColliderCenter;
     private float slideTimer;
@@ -105,12 +107,25 @@ public class PlayerMovement : MonoBehaviour
         }
 
         // Slide Trigger
-        if (Input.GetKeyDown(KeyCode.LeftControl) && (horizontalInput != 0 || verticalInput != 0) && grounded)
+        if (Input.GetKey(KeyCode.LeftControl) && state == MovementState.Air)
         {
+            airGraceTime += Time.deltaTime;
+        }
+        if (Input.GetKeyUp(KeyCode.LeftControl))
+        {
+            airGraceTime = 0f;
+        }
+        if ((Input.GetKeyDown(KeyCode.LeftControl) || (airGraceTime > 0f && airGraceTime <= airGracePeriod)) && (horizontalInput != 0 || verticalInput != 0) && grounded)
+        {
+            if (airGraceTime > 0f && airGraceTime <= airGracePeriod)
+            {
+                airGraceTime = 0f;
+            }
             StartSlide();
         }
         if (Input.GetKeyUp(KeyCode.LeftControl) && state == MovementState.Sliding)
         {
+            airGraceTime = 0f;
             StopSlide();
         }
     }
