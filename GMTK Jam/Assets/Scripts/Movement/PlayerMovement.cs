@@ -59,6 +59,8 @@ public class PlayerMovement : MonoBehaviour
     private RaycastHit rightWallHit;
     private bool wallLeft;
     private bool wallRight;
+    private Transform movingTrans;
+    private Vector3 movingLastPos;
 
     private void Start()
     {
@@ -75,6 +77,18 @@ public class PlayerMovement : MonoBehaviour
     {
         // Ground detection
         grounded = Physics.Raycast(transform.position, Vector3.down, out groundHit, playerHeight * 0.5f + 0.3f, whatIsGround);
+        if (groundHit.collider != null)
+        {
+            movingTrans = groundHit.collider.transform;
+            movingLastPos = movingTrans.position;
+
+            Vector3 displacement = movingTrans.position - movingLastPos;
+            movingLastPos = movingTrans.position;
+        }
+        else
+        {
+            movingTrans = null;
+        }
 
         // Inputs and States
         GetInput();
@@ -83,6 +97,15 @@ public class PlayerMovement : MonoBehaviour
 
         // Physics drag
         rb.linearDamping = grounded ? groundDrag : 0f;
+    }
+
+    private void LateUpdate()
+    {
+        if (movingTrans != null)
+        {
+            Vector3 displacement = movingTrans.position - movingLastPos;
+            transform.position += displacement;
+        }
     }
 
     private void FixedUpdate()
