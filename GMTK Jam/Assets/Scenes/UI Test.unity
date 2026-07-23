@@ -1155,63 +1155,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e36435fccd5c3aa438879557b66dd63f, type: 3}
---- !u!1001 &7347081965975752721
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 3615361170727178482, guid: f6efd0fc5e54c9d408189cf9b4088901, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -0.052103512
-      objectReference: {fileID: 0}
-    - target: {fileID: 3615361170727178482, guid: f6efd0fc5e54c9d408189cf9b4088901, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0.395
-      objectReference: {fileID: 0}
-    - target: {fileID: 3615361170727178482, guid: f6efd0fc5e54c9d408189cf9b4088901, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -5.081675
-      objectReference: {fileID: 0}
-    - target: {fileID: 3615361170727178482, guid: f6efd0fc5e54c9d408189cf9b4088901, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: -0.18679781
-      objectReference: {fileID: 0}
-    - target: {fileID: 3615361170727178482, guid: f6efd0fc5e54c9d408189cf9b4088901, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0.11671909
-      objectReference: {fileID: 0}
-    - target: {fileID: 3615361170727178482, guid: f6efd0fc5e54c9d408189cf9b4088901, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0.9650725
-      objectReference: {fileID: 0}
-    - target: {fileID: 3615361170727178482, guid: f6efd0fc5e54c9d408189cf9b4088901, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0.1418388
-      objectReference: {fileID: 0}
-    - target: {fileID: 3615361170727178482, guid: f6efd0fc5e54c9d408189cf9b4088901, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: -18.504
-      objectReference: {fileID: 0}
-    - target: {fileID: 3615361170727178482, guid: f6efd0fc5e54c9d408189cf9b4088901, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 200.199
-      objectReference: {fileID: 0}
-    - target: {fileID: 3615361170727178482, guid: f6efd0fc5e54c9d408189cf9b4088901, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 10.468
-      objectReference: {fileID: 0}
-    - target: {fileID: 3618988529612529982, guid: f6efd0fc5e54c9d408189cf9b4088901, type: 3}
-      propertyPath: m_Name
-      value: TimeWarp Pickup
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: f6efd0fc5e54c9d408189cf9b4088901, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -1221,4 +1164,3 @@ SceneRoots:
   - {fileID: 111649226}
   - {fileID: 1320670846}
   - {fileID: 531499521}
-  - {fileID: 7347081965975752721}
