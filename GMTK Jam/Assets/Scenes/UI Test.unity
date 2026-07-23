@@ -1023,8 +1023,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TimeManager
   startingTime: 60
-  lowTimeThreshold: 50
-  lowTimeColor: {r: 0.5849056, g: 0.10208259, b: 0.10208259, a: 1}
+  lowTimeThreshold: 55
+  lowTimeColor: {r: 0.8773585, g: 0.24417053, b: 0.24417053, a: 1}
   timeText: {fileID: 298698864}
 --- !u!1001 &4077268715190208592
 PrefabInstance:
@@ -1112,38 +1112,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1067195112971621004, guid: e36435fccd5c3aa438879557b66dd63f, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6514512409047815921, guid: e36435fccd5c3aa438879557b66dd63f, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6514512409047815921, guid: e36435fccd5c3aa438879557b66dd63f, type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6514512409047815921, guid: e36435fccd5c3aa438879557b66dd63f, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6514512409047815921, guid: e36435fccd5c3aa438879557b66dd63f, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7569874085786466899, guid: e36435fccd5c3aa438879557b66dd63f, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7569874085786466899, guid: e36435fccd5c3aa438879557b66dd63f, type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7569874085786466899, guid: e36435fccd5c3aa438879557b66dd63f, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7569874085786466899, guid: e36435fccd5c3aa438879557b66dd63f, type: 3}
-      propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7701828062529852039, guid: e36435fccd5c3aa438879557b66dd63f, type: 3}
