@@ -33,8 +33,16 @@ public class UniversalUIManager : MonoBehaviour
     private Slider masterVolumeSlider;
     private Slider brightnessSlider;
     private Image brightnessOverlay;
+    private Camera mainCam;
 
     private bool isPaused = false;
+    public bool IsPaused
+    {
+        get
+        {
+            return isPaused;
+        }
+    }
 
     private void Awake()
     {
@@ -71,6 +79,8 @@ public class UniversalUIManager : MonoBehaviour
 
     private void AutoAssignReferences()
     {
+        mainCam = Camera.main;
+        
         Canvas canvas = FindFirstObjectByType<Canvas>();
         if (canvas == null) return;
 
@@ -253,7 +263,9 @@ public class UniversalUIManager : MonoBehaviour
         if (!canThisSceneBePaused) return;
         isPaused = true;
         if (pauseMenuPanel != null) pauseMenuPanel.SetActive(true);
-        Time.timeScale = 0f; 
+        Time.timeScale = 0f;
+        if (mainCam != null && mainCam.gameObject.TryGetComponent<PlayerCam>(out PlayerCam playerCam))
+            playerCam.UnlockCursor();
     }
 
     public void ResumeGame()
@@ -262,6 +274,8 @@ public class UniversalUIManager : MonoBehaviour
         if (pauseMenuPanel != null) pauseMenuPanel.SetActive(false);
         if (optionsMenuPanel != null) optionsMenuPanel.SetActive(false);
         Time.timeScale = 1f;
+        if (mainCam != null && mainCam.gameObject.TryGetComponent<PlayerCam>(out PlayerCam playerCam))
+            playerCam.LockCursor();
     }
 
     public void OpenPauseOptions()

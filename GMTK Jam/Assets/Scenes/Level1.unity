@@ -698,6 +698,7 @@ MonoBehaviour:
   cameraOffset: {x: 0, y: 0.5, z: 0}
   slideCameraHeight: 0.5
   heightLerpSpeed: 10
+  isCursorUnlocked: 0
 --- !u!1 &742719235
 GameObject:
   m_ObjectHideFlags: 0
