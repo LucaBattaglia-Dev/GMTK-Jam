@@ -344,22 +344,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 2399714985414525910, guid: 85adf9c75f990d241afbdaecae685f3b, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2399714985414525910, guid: 85adf9c75f990d241afbdaecae685f3b, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 1177961969}
-    - target: {fileID: 2399714985414525910, guid: 85adf9c75f990d241afbdaecae685f3b, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: ChangeToLevelMusic
-      objectReference: {fileID: 0}
-    - target: {fileID: 2399714985414525910, guid: 85adf9c75f990d241afbdaecae685f3b, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: BGMManager, Assembly-CSharp
-      objectReference: {fileID: 0}
     - target: {fileID: 3074820015404283123, guid: 85adf9c75f990d241afbdaecae685f3b, type: 3}
       propertyPath: m_Name
       value: MainMenuPanel
@@ -784,17 +768,6 @@ MonoBehaviour:
   m_ShadowLayerMask: 1
   m_RenderingLayers: 1
   m_ShadowRenderingLayers: 1
---- !u!114 &1177961969 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4852995108775058922, guid: e6f3d3ae79be3f145a41d62dec1bfaad, type: 3}
-  m_PrefabInstance: {fileID: 6881414759171426547}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5a4d07ea5dd75fa4f94a4f613234d200, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::BGMManager
 --- !u!1001 &1712809355
 PrefabInstance:
   m_ObjectHideFlags: 0

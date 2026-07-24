@@ -39,6 +39,7 @@ public class BGMManager : MonoBehaviour
             instance = this;
             this.transform.parent = null; 
         }
+        transform.SetParent(null);
         DontDestroyOnLoad(this.gameObject);
         AudioListener.pause = false;
         source = this.gameObject.GetComponent<AudioSource>();
@@ -62,13 +63,17 @@ public class BGMManager : MonoBehaviour
     public void MusicChange(AudioClip clip, float volume) //change the bgm to something else
     {
         source.clip = clip;
-        source.volume = volume * bgmVolume;
+        source.volume = volume; //add multiplier here for volume adjustment
         source.loop = true;
         source.Play();
     }
 
     public void ChangeToLevelMusic() //change to level bgm
     {
-        MusicChange(levelBGM, 1);
+        MusicChange(levelBGM, bgmVolume);
+    }
+
+    public void ChangeToMenuMusic(){
+        MusicChange(menuBGM, bgmVolume);
     }
 }
