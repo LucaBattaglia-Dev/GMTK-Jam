@@ -11,6 +11,18 @@ public class RoadGenerator : MonoBehaviour
         public Vector3 offset;
     }
 
+    [System.Serializable]
+    public struct BuildingConfig
+    {
+        public GameObject prefab;
+        public Vector3 rotation;
+        public Vector3 offset;
+        [Tooltip("Length of the building along the Z axis (in tile units, e.g., 3 = 3 tiles long)")]
+        public float lengthInTiles;
+        [Tooltip("Width/depth of the building along the X axis (in tile units)")]
+        public float widthInTiles;
+    }
+
     [Header("Player Reference")]
     [Tooltip("Drag your Player transform here (or leave empty to auto-find by 'Player' tag)")]
     [SerializeField] private Transform player;
@@ -21,6 +33,13 @@ public class RoadGenerator : MonoBehaviour
 
     [Tooltip("Segments further behind than this number will be destroyed (> 12)")]
     [SerializeField] private int despawnDistanceSegments = 12;
+
+    [Header("Building Settings")]
+    [Tooltip("Pool of building prefabs with individual sizing, offset, and rotation settings")]
+    [SerializeField] private BuildingConfig[] buildingPrefabs = new BuildingConfig[15];
+
+    [Tooltip("Gap space between buildings in tile units (0.25 = a quarter tile space)")]
+    [SerializeField] private float buildingSpacingTiles = 0.25f;
 
     [Header("Sidewalk Settings (Shared for Left & Right)")]
     [SerializeField] private TileConfig sidewalk;
@@ -46,16 +65,24 @@ public class RoadGenerator : MonoBehaviour
     [Tooltip("Width of curb tiles along the X axis")]
     [SerializeField] private float curbTileWidth = 5.0f;
 
-    // Track active segments by their Z index
+    // Track active road row segments by Z index
     private readonly Dictionary<int, GameObject> activeSegments = new Dictionary<int, GameObject>();
     private int highestSpawnedIndex = 0;
+
+    // Independent Z position trackers for building placement
+    private float nextLeftBuildingZ = 0f;
+    private float nextRightBuildingZ = 0f;
+
+    // Prevent duplicate adjacent buildings
+    private int lastLeftBuildingIndex = -1;
+    private int lastRightBuildingIndex = -1;
 
     private void Start()
     {
         if (player == null)
         {
             GameObject playerObj = GameObject.FindWithTag("Player");
-            if (playerObj != null) 
+            if (playerObj != null)
             {
                 player = playerObj.transform;
             }
@@ -66,7 +93,6 @@ public class RoadGenerator : MonoBehaviour
             }
         }
 
-        // Initialize road around starting position
         UpdateEndlessRoad();
     }
 
@@ -79,21 +105,34 @@ public class RoadGenerator : MonoBehaviour
 
     private void UpdateEndlessRoad()
     {
-        // 1. Calculate which Z segment index the player is currently inside
+        // 1. Calculate player's current Z segment index
         int playerSegmentIndex = Mathf.FloorToInt(player.position.z / segmentLength);
 
-        // 2. Generate new segments ahead
+        // 2. Generate new road rows ahead
         int targetMaxSegment = playerSegmentIndex + segmentsAhead;
         for (int z = highestSpawnedIndex; z <= targetMaxSegment; z++)
         {
             if (!activeSegments.ContainsKey(z))
             {
-                SpawnRow(z);
+                SpawnRoadRow(z);
             }
         }
         highestSpawnedIndex = Mathf.Max(highestSpawnedIndex, targetMaxSegment);
 
-        // 3. Destroy segments that fall > 12 segments behind the player
+        // 3. Generate buildings independently ahead on both sides
+        float targetMaxZ = targetMaxSegment * segmentLength;
+
+        while (nextLeftBuildingZ < targetMaxZ)
+        {
+            SpawnBuilding(isLeft: true, ref nextLeftBuildingZ, ref lastLeftBuildingIndex);
+        }
+
+        while (nextRightBuildingZ < targetMaxZ)
+        {
+            SpawnBuilding(isLeft: false, ref nextRightBuildingZ, ref lastRightBuildingIndex);
+        }
+
+        // 4. Despawn segments > 12 tiles behind player (cleans up associated buildings automatically)
         List<int> indicesToRemove = new List<int>();
         foreach (var kvp in activeSegments)
         {
@@ -101,7 +140,7 @@ public class RoadGenerator : MonoBehaviour
 
             if (playerSegmentIndex - segmentZ > despawnDistanceSegments)
             {
-                Destroy(kvp.Value); // Destroys the whole parent row GameObject
+                Destroy(kvp.Value);
                 indicesToRemove.Add(segmentZ);
             }
         }
@@ -112,16 +151,14 @@ public class RoadGenerator : MonoBehaviour
         }
     }
 
-    private void SpawnRow(int zIndex)
+    private void SpawnRoadRow(int zIndex)
     {
-        // Create a single parent object for the entire row to keep the hierarchy clean & make destruction easy
         GameObject rowParent = new GameObject($"RoadSegment_{zIndex}");
         rowParent.transform.SetParent(transform);
 
         float zPos = zIndex * segmentLength;
         Vector3 rowOrigin = new Vector3(transform.position.x, transform.position.y, zPos);
 
-        // Calculate X offsets from center line outwards
         float leftMidX  = rowOrigin.x - (roadTileWidth * 0.5f);
         float rightMidX = rowOrigin.x + (roadTileWidth * 0.5f);
 
@@ -155,8 +192,76 @@ public class RoadGenerator : MonoBehaviour
             SpawnTile(sidewalk, new Vector3(rightSidewalkX, rowOrigin.y, zPos), rowParent.transform);
         }
 
-        // Add to tracking dictionary
         activeSegments.Add(zIndex, rowParent);
+    }
+
+    private void SpawnBuilding(bool isLeft, ref float currentZ, ref int lastIndex)
+    {
+        if (buildingPrefabs == null || buildingPrefabs.Length == 0) return;
+
+        int bgIndex = GetRandomBuildingIndex(lastIndex);
+        if (bgIndex == -1) return;
+        lastIndex = bgIndex;
+
+        BuildingConfig bConfig = buildingPrefabs[bgIndex];
+
+        // Sanity check to avoid zero or negative dimensions
+        float lengthInTiles = bConfig.lengthInTiles > 0 ? bConfig.lengthInTiles : 1f;
+        float widthInTiles = bConfig.widthInTiles > 0 ? bConfig.widthInTiles : 1f;
+
+        float buildingLengthUnits = lengthInTiles * segmentLength;
+        float spacingUnits = buildingSpacingTiles * segmentLength;
+
+        // Position building center along Z
+        float centerZ = currentZ + (buildingLengthUnits * 0.5f);
+
+        // Find corresponding row parent segment for organized hierarchy and cleanup
+        int segmentZIndex = Mathf.FloorToInt(currentZ / segmentLength);
+
+        if (activeSegments.TryGetValue(segmentZIndex, out GameObject rowParent))
+        {
+            float startX = transform.position.x;
+            float leftCurbX  = startX - (roadTileWidth * 2.0f) - (curbTileWidth * 0.5f);
+            float rightCurbX = startX + (roadTileWidth * 2.0f) + (curbTileWidth * 0.5f);
+
+            float buildingX;
+            if (isLeft)
+            {
+                float farLeftSidewalkX = leftCurbX - (curbTileWidth * 0.5f) - (sidewalkTileWidth * sidewalkCount);
+                buildingX = farLeftSidewalkX - (widthInTiles * roadTileWidth * 0.5f);
+            }
+            else
+            {
+                float farRightSidewalkX = rightCurbX + (curbTileWidth * 0.5f) + (sidewalkTileWidth * sidewalkCount);
+                buildingX = farRightSidewalkX + (widthInTiles * roadTileWidth * 0.5f);
+            }
+
+            Vector3 basePosition = new Vector3(buildingX, transform.position.y, centerZ);
+            Vector3 finalPosition = basePosition + bConfig.offset;
+            Quaternion finalRotation = transform.rotation * Quaternion.Euler(bConfig.rotation);
+
+            if (bConfig.prefab != null)
+            {
+                Instantiate(bConfig.prefab, finalPosition, finalRotation, rowParent.transform);
+            }
+        }
+
+        // Advance current Z tracker by the building's length + gap space
+        currentZ += buildingLengthUnits + spacingUnits;
+    }
+
+    private int GetRandomBuildingIndex(int previousIndex)
+    {
+        if (buildingPrefabs == null || buildingPrefabs.Length == 0) return -1;
+        if (buildingPrefabs.Length == 1) return 0;
+
+        int newIndex;
+        do
+        {
+            newIndex = Random.Range(0, buildingPrefabs.Length);
+        } while (newIndex == previousIndex);
+
+        return newIndex;
     }
 
     private void SpawnTile(TileConfig config, Vector3 basePosition, Transform parent)
