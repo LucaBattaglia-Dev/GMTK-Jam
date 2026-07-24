@@ -13,6 +13,19 @@ public class PlayerMovement : MonoBehaviour
     public float jumpForce = 12f;
     public float airMultiplier = 0.4f;
 
+    [Header("Sprinting")]
+    public float sprintTime = 3f;
+    public float sprintRegenPerSecond = 1.5f;
+    private float sprintTimer;
+    public float SprintTimer
+    {
+        get
+        {
+            return sprintTimer;
+        }
+    }
+    private bool isSprinting = false;
+
     [Header("Sliding")]
     public float airGracePeriod = 1f;
     public float maxSlideTime = 0.75f;
@@ -73,6 +86,8 @@ public class PlayerMovement : MonoBehaviour
 
         startColliderHeight = col.height;
         startColliderCenter = col.center;
+
+        sprintTimer = sprintTime;
     }
 
     private void Update()
@@ -106,6 +121,20 @@ public class PlayerMovement : MonoBehaviour
 
         // Physics drag
         rb.linearDamping = grounded ? groundDrag : 0f;
+
+        // Sprint Timer
+        if (isSprinting)
+        {
+            sprintTimer -= Time.deltaTime;
+            if (sprintTimer <= 0f)
+                sprintTimer = 0f;
+        }
+        else
+        {
+            sprintTimer += Time.deltaTime * sprintRegenPerSecond;
+            if (sprintTimer >= sprintTime)
+                sprintTimer = sprintTime;
+        }
     }
 
     private void FixedUpdate()
@@ -151,6 +180,9 @@ public class PlayerMovement : MonoBehaviour
             airGraceTime = 0f;
             StopSlide();
         }
+
+        // Sprint
+        isSprinting = Input.GetKey(KeyCode.LeftShift) && grounded;
     }
 
     private void StateHandler()
@@ -180,7 +212,7 @@ public class PlayerMovement : MonoBehaviour
         {
             if (state == MovementState.WallRunning) StopWallRun();
 
-            state = Input.GetKey(KeyCode.LeftShift) ? MovementState.Sprinting : MovementState.Walking;
+            state = isSprinting && sprintTimer != 0f ? MovementState.Sprinting : MovementState.Walking;
         }
         // 4. In Air
         else
