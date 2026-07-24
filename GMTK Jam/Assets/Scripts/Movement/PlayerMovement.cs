@@ -61,6 +61,8 @@ public class PlayerMovement : MonoBehaviour
     private bool wallRight;
     private Transform movingTrans;
     private Vector3 movingLastPos;
+    private Vector3 movingVelocity;
+    private Collider lastGround;
 
     private void Start()
     {
@@ -77,17 +79,24 @@ public class PlayerMovement : MonoBehaviour
     {
         // Ground detection
         grounded = Physics.Raycast(transform.position, Vector3.down, out groundHit, playerHeight * 0.5f + 0.3f, whatIsGround);
-        if (groundHit.collider != null)
+        if (groundHit.collider != null && (lastGround == null || groundHit.collider == lastGround))
         {
+            lastGround = groundHit.collider;
             movingTrans = groundHit.collider.transform;
+            Vector3 displacement;
+            if (movingLastPos == Vector3.zero)
+                displacement = Vector3.zero;
+            else
+                displacement = movingTrans.position - movingLastPos;
+            movingVelocity = (movingTrans.position - movingLastPos) / Time.deltaTime;
             movingLastPos = movingTrans.position;
-
-            Vector3 displacement = movingTrans.position - movingLastPos;
-            movingLastPos = movingTrans.position;
+            transform.position += displacement;
         }
         else
         {
             movingTrans = null;
+            movingLastPos = Vector3.zero;
+            lastGround = null;
         }
 
         // Inputs and States
@@ -97,15 +106,6 @@ public class PlayerMovement : MonoBehaviour
 
         // Physics drag
         rb.linearDamping = grounded ? groundDrag : 0f;
-    }
-
-    private void LateUpdate()
-    {
-        if (movingTrans != null)
-        {
-            Vector3 displacement = movingTrans.position - movingLastPos;
-            transform.position += displacement;
-        }
     }
 
     private void FixedUpdate()
@@ -224,6 +224,12 @@ public class PlayerMovement : MonoBehaviour
     private void Jump()
     {
         rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
+        if (movingTrans != null)
+        {
+            Vector3 totalVelocity = rb.linearVelocity + movingVelocity;
+            rb.linearVelocity = totalVelocity;
+            Debug.Log(totalVelocity);
+        }
         rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
     }
 
