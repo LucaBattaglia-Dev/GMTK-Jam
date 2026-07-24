@@ -114,7 +114,7 @@ MonoBehaviour:
   startingTime: 60
   lowTimeThreshold: 20
   lowTimeColor: {r: 0.8773585, g: 0.24417053, b: 0.24417053, a: 1}
-  timeText: {fileID: 0}
+  timeText: {fileID: 2411944136824761512}
 --- !u!1 &1193244067148022831
 GameObject:
   m_ObjectHideFlags: 0
@@ -448,6 +448,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelUIManager
   powerupCooldownParent: {fileID: 2751458976430604128}
   powerupDurationPrefab: {fileID: 5065272440423939610, guid: edeef911a1dd1cb40ba53911de59bb77, type: 3}
+  sprintBar: {fileID: 725066266585919799}
   distanceTextParent: {fileID: 5115040873859225097}
 --- !u!1 &2751458976430604128
 GameObject:

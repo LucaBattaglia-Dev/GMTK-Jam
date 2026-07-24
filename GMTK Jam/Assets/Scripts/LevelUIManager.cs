@@ -6,10 +6,13 @@ public class LevelUIManager : MonoBehaviour
 {
     [SerializeField] private GameObject powerupCooldownParent; 
     [SerializeField] private GameObject powerupDurationPrefab;
+    [SerializeField] private SprintDisplay sprintBar; 
     [SerializeField] private Transform distanceTextParent; 
     private TMP_Text[] distanceTextArray = new TMP_Text[5];
-    private float distance = 80;
+    private float distance;
     public float Distance {get{return distance;} set{distance = value;}}
+    private Transform playerTracker; 
+    private Transform player; 
 
     static private LevelUIManager instance;
     static public LevelUIManager Instance
@@ -37,6 +40,13 @@ public class LevelUIManager : MonoBehaviour
         for(int i = 0; i < distanceTextArray.Length; i++){
             distanceTextArray[i] = distanceTextParent.GetChild(i).GetChild(0).gameObject.GetComponent<TMP_Text>();
         }
+
+
+        player = sprintBar.player.gameObject.transform;
+        playerTracker = new GameObject("Player Tracker").transform;
+        playerTracker.SetParent(player);
+        playerTracker.localPosition = Vector3.zero;
+        playerTracker.SetParent(null);
     }
 
     public void InstantiateCooldownUI(Pickup pickup){
@@ -56,8 +66,11 @@ public class LevelUIManager : MonoBehaviour
     }
 
     void FixedUpdate(){
-        distance += Time.deltaTime; 
+        //Get Z difference from player tracker and player
+        distance = player.position.z - playerTracker.position.z;
         UpdateDistanceUI(); 
+
+
     }
 
     #endregion
