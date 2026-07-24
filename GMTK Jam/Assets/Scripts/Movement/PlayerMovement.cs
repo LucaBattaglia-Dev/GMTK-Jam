@@ -13,11 +13,26 @@ public class PlayerMovement : MonoBehaviour
     public float jumpForce = 12f;
     public float airMultiplier = 0.4f;
 
+    [Header("Sprinting")]
+    public float sprintTime = 3f;
+    public float sprintRegenPerSecond = 1.5f;
+    private float sprintTimer;
+    public float SprintTimer
+    {
+        get
+        {
+            return sprintTimer;
+        }
+    }
+    private bool isSprinting = false;
+
     [Header("Sliding")]
+    public float airGracePeriod = 1f;
     public float maxSlideTime = 0.75f;
     public float slideForce = 400f;
     public float slideColliderHeight = 1f; // Half height collider during slide
     public float slideStickForce = 25f; // Keeps player glued to ground
+    private float airGraceTime;
     private float startColliderHeight;
     private Vector3 startColliderCenter;
     private float slideTimer;
@@ -57,6 +72,10 @@ public class PlayerMovement : MonoBehaviour
     private RaycastHit rightWallHit;
     private bool wallLeft;
     private bool wallRight;
+    private Transform movingTrans;
+    private Vector3 movingLastPos;
+    private Vector3 movingVelocity;
+    private Collider lastGround;
 
     private void Start()
     {
@@ -67,12 +86,33 @@ public class PlayerMovement : MonoBehaviour
 
         startColliderHeight = col.height;
         startColliderCenter = col.center;
+
+        sprintTimer = sprintTime;
     }
 
     private void Update()
     {
         // Ground detection
         grounded = Physics.Raycast(transform.position, Vector3.down, out groundHit, playerHeight * 0.5f + 0.3f, whatIsGround);
+        if (groundHit.collider != null && (lastGround == null || groundHit.collider == lastGround))
+        {
+            lastGround = groundHit.collider;
+            movingTrans = groundHit.collider.transform;
+            Vector3 displacement;
+            if (movingLastPos == Vector3.zero)
+                displacement = Vector3.zero;
+            else
+                displacement = movingTrans.position - movingLastPos;
+            movingVelocity = (movingTrans.position - movingLastPos) / Time.deltaTime;
+            movingLastPos = movingTrans.position;
+            transform.position += displacement;
+        }
+        else
+        {
+            movingTrans = null;
+            movingLastPos = Vector3.zero;
+            lastGround = null;
+        }
 
         // Inputs and States
         GetInput();
@@ -81,6 +121,20 @@ public class PlayerMovement : MonoBehaviour
 
         // Physics drag
         rb.linearDamping = grounded ? groundDrag : 0f;
+
+        // Sprint Timer
+        if (isSprinting)
+        {
+            sprintTimer -= Time.deltaTime;
+            if (sprintTimer <= 0f)
+                sprintTimer = 0f;
+        }
+        else
+        {
+            sprintTimer += Time.deltaTime * sprintRegenPerSecond;
+            if (sprintTimer >= sprintTime)
+                sprintTimer = sprintTime;
+        }
     }
 
     private void FixedUpdate()
@@ -105,14 +159,30 @@ public class PlayerMovement : MonoBehaviour
         }
 
         // Slide Trigger
-        if (Input.GetKeyDown(KeyCode.LeftControl) && (horizontalInput != 0 || verticalInput != 0) && grounded)
+        if (Input.GetKey(KeyCode.LeftControl) && state == MovementState.Air)
         {
+            airGraceTime += Time.deltaTime;
+        }
+        if (Input.GetKeyUp(KeyCode.LeftControl))
+        {
+            airGraceTime = 0f;
+        }
+        if ((Input.GetKeyDown(KeyCode.LeftControl) || (airGraceTime > 0f && airGraceTime <= airGracePeriod)) && (horizontalInput != 0 || verticalInput != 0) && grounded)
+        {
+            if (airGraceTime > 0f && airGraceTime <= airGracePeriod)
+            {
+                airGraceTime = 0f;
+            }
             StartSlide();
         }
         if (Input.GetKeyUp(KeyCode.LeftControl) && state == MovementState.Sliding)
         {
+            airGraceTime = 0f;
             StopSlide();
         }
+
+        // Sprint
+        isSprinting = Input.GetKey(KeyCode.LeftShift) && grounded;
     }
 
     private void StateHandler()
@@ -142,7 +212,7 @@ public class PlayerMovement : MonoBehaviour
         {
             if (state == MovementState.WallRunning) StopWallRun();
 
-            state = Input.GetKey(KeyCode.LeftShift) ? MovementState.Sprinting : MovementState.Walking;
+            state = isSprinting && sprintTimer != 0f ? MovementState.Sprinting : MovementState.Walking;
         }
         // 4. In Air
         else
@@ -186,6 +256,12 @@ public class PlayerMovement : MonoBehaviour
     private void Jump()
     {
         rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
+        if (movingTrans != null)
+        {
+            Vector3 totalVelocity = rb.linearVelocity + movingVelocity;
+            rb.linearVelocity = totalVelocity;
+            Debug.Log(totalVelocity);
+        }
         rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
     }
 
