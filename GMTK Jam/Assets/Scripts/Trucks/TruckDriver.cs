@@ -4,25 +4,41 @@ public class TruckDriver : MonoBehaviour
 {
     [Header("Movement Speed Ranges (Constant per truck)")]
     public float minMoveSpeed = 5.0f;
-    public float maxMoveSpeed = 13.0f;
+    public float maxMoveSpeed = 15.0f;
 
     [Header("Turn Speed Ranges")]
-    public float minTurnSpeed = 1.0f;
+    public float minTurnSpeed = 1.5f;
     public float maxTurnSpeed = 3.0f;
 
     [Header("Waypoint Generation Settings")]
-    public float minForwardDistance = 10f;
-    public float maxForwardDistance = 35f;
+    public float minForwardDistance = 15f;
+    public float maxForwardDistance = 40f;
 
     [Header("Road Width Range")]
     public float minRoadWidth = 1.0f;
-    public float maxRoadWidth = 3.0f;
+    public float maxRoadWidth = 2.125f;
 
     [Header("Waypoint Arrival Ranges")]
-    public float minWaypointTolerance = 3.0f;
-    public float maxWaypointTolerance = 7.0f;
-    public float maxOvershotDistance = 3.0f; // Max meters behind Z-axis before abandoning point
+    public float minWaypointTolerance = 4.0f;
+    public float maxWaypointTolerance = 9.0f;
+    public float maxOvershotDistance = 2.0f; // Max meters behind Z-axis before abandoning point
     public LayerMask roadLayer;
+
+    [Header("Crash & Vision Settings")]
+    public LayerMask buildingLayer;
+    public LayerMask truckLayer;
+
+    [Tooltip("Distance in front of the truck to cast vision rays for buildings")]
+    public float visionDistance = 2.5f;
+    
+    [Tooltip("Width spread of the front bumper vision rays")]
+    public float visionWidth = 1.5f;
+
+    [Tooltip("Impact speed required to trigger a crash when hitting a building")]
+    public float minBuildingImpactSpeed = 1.0f;
+
+    [Tooltip("Higher impact speed required to trigger a crash when hitting another truck")]
+    public float minTruckImpactSpeed = 7.0f;
 
     [Header("Debug Visualization")]
     public bool showDebugLines = true;
@@ -37,6 +53,7 @@ public class TruckDriver : MonoBehaviour
 
     private Vector3 currentTargetPoint;
     private bool hasValidTarget = false;
+    private bool isCrashed = false; // Prevents further movement once crashed
 
     private void Start()
     {
@@ -50,6 +67,14 @@ public class TruckDriver : MonoBehaviour
 
     private void Update()
     {
+        // Stop all processing if the truck has crashed
+        if (isCrashed) return;
+
+        // 1. Check forward vision rays for immediate wall/building detection
+        CheckForwardVision();
+        if (isCrashed) return;
+
+        // 2. Waypoint navigation
         if (!hasValidTarget)
         {
             GenerateNextWaypoint();
@@ -72,6 +97,61 @@ public class TruckDriver : MonoBehaviour
         }
 
         transform.Translate(Vector3.forward * constantMoveSpeed * Time.deltaTime);
+    }
+
+    private void CheckForwardVision()
+    {
+        // Raycast origin at truck center height (~1 unit up)
+        Vector3 centerOrigin = transform.position + Vector3.up * 1f;
+
+        // Cast 3 forward rays: Center, Left, and Right bumper offsets
+        Vector3[] rayOrigins = new Vector3[]
+        {
+            centerOrigin,
+            centerOrigin + (transform.right * (visionWidth * 0.5f)),
+            centerOrigin - (transform.right * (visionWidth * 0.5f))
+        };
+
+        foreach (Vector3 origin in rayOrigins)
+        {
+            if (Physics.Raycast(origin, transform.forward, out RaycastHit hit, visionDistance, buildingLayer))
+            {
+                TriggerCrash();
+                return;
+            }
+        }
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (isCrashed) return;
+
+        int hitLayer = collision.gameObject.layer;
+        float impactSpeed = collision.relativeVelocity.magnitude;
+
+        // 1. Collision with Building (Slight to moderate hit threshold)
+        if (((1 << hitLayer) & buildingLayer.value) != 0)
+        {
+            if (impactSpeed >= minBuildingImpactSpeed)
+            {
+                TriggerCrash();
+            }
+        }
+        // 2. Collision with Another Truck (Requires harder/more forceful impact)
+        else if (((1 << hitLayer) & truckLayer.value) != 0)
+        {
+            if (impactSpeed >= minTruckImpactSpeed)
+            {
+                TriggerCrash();
+            }
+        }
+    }
+
+    private void TriggerCrash()
+    {
+        isCrashed = true;
+        hasValidTarget = false;
+        Debug.Log("truck crashed");
     }
 
     private void CheckWaypointDistance()
@@ -126,7 +206,16 @@ public class TruckDriver : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        if (showDebugLines && hasValidTarget)
+        if (!showDebugLines) return;
+
+        // Draw forward vision rays in Scene View
+        Gizmos.color = isCrashed ? Color.red : Color.cyan;
+        Vector3 centerOrigin = transform.position + Vector3.up * 2.5f;
+        Gizmos.DrawRay(centerOrigin, transform.forward * visionDistance);
+        Gizmos.DrawRay(centerOrigin + (transform.right * (visionWidth * 0.5f)), transform.forward * visionDistance);
+        Gizmos.DrawRay(centerOrigin - (transform.right * (visionWidth * 0.5f)), transform.forward * visionDistance);
+
+        if (hasValidTarget && !isCrashed)
         {
             Gizmos.color = Color.yellow;
             Gizmos.DrawWireSphere(currentTargetPoint, currentWaypointTolerance > 0 ? currentWaypointTolerance : minWaypointTolerance);
