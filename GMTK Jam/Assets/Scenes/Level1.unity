@@ -470,7 +470,8 @@ Transform:
   m_LocalPosition: {x: -22, y: 3.5, z: 4.75}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 498306354}
   m_Father: {fileID: 1210910745}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &135714830
@@ -819,6 +820,11 @@ MonoBehaviour:
 Transform:
   m_CorrespondingSourceObject: {fileID: 421600, guid: f9c5e344bb1131f4f83e34b3f8cae927, type: 3}
   m_PrefabInstance: {fileID: 47263714}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &498306354 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7082758008068234977, guid: 5afc20fb134172446b182a238e83ff00, type: 3}
+  m_PrefabInstance: {fileID: 1526737711}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &520808190
 PrefabInstance:
@@ -1641,6 +1647,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 10253d015a3f3204daa931d57cd41233, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RoadGenerator
+  player: {fileID: 135714829}
+  segmentsAhead: 35
+  despawnDistanceSegments: 25
   sidewalk:
     prefab: {fileID: 5296623475390826882, guid: 45a4f32d2bc007049b2f9371d4cf6470, type: 3}
     rotation: {x: 0, y: 0, z: 0}
@@ -1674,14 +1683,13 @@ MonoBehaviour:
   segmentLength: 5
   roadTileWidth: 5
   curbTileWidth: 5
-  totalSegments: 100
 --- !u!1001 &1526737711
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 0}
+    m_TransformParent: {fileID: 135714829}
     m_Modifications:
     - target: {fileID: 7082758008068234977, guid: 5afc20fb134172446b182a238e83ff00, type: 3}
       propertyPath: m_LocalScale.x
@@ -1697,15 +1705,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7082758008068234977, guid: 5afc20fb134172446b182a238e83ff00, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -36
       objectReference: {fileID: 0}
     - target: {fileID: 7082758008068234977, guid: 5afc20fb134172446b182a238e83ff00, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -50
+      value: -56
       objectReference: {fileID: 0}
     - target: {fileID: 7082758008068234977, guid: 5afc20fb134172446b182a238e83ff00, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 19
       objectReference: {fileID: 0}
     - target: {fileID: 7082758008068234977, guid: 5afc20fb134172446b182a238e83ff00, type: 3}
       propertyPath: m_LocalRotation.w
@@ -2657,4 +2665,3 @@ SceneRoots:
   - {fileID: 2092451075}
   - {fileID: 25767125}
   - {fileID: 1343558350}
-  - {fileID: 1526737711}
