@@ -434,7 +434,6 @@ GameObject:
   - component: {fileID: 2496997701479035362}
   - component: {fileID: 5796175800194824238}
   - component: {fileID: 5773554406569620004}
-  - component: {fileID: 426282305443389658}
   m_Layer: 5
   m_Name: OptionsButton
   m_TagString: Untagged
@@ -556,20 +555,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 1
---- !u!114 &426282305443389658
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4312927881468639328}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 94f1246c4ca9853418d2e148aa12a3e2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::HighlightButtonText
-  textToChange: {fileID: 8560683997928068244}
-  color: {r: 0.7830189, g: 0.40038267, b: 0.2696244, a: 1}
 --- !u!1 &4631115409055565745
 GameObject:
   m_ObjectHideFlags: 0
@@ -732,7 +717,6 @@ GameObject:
   - component: {fileID: 5667433187535991886}
   - component: {fileID: 5414173834128716083}
   - component: {fileID: 6848009987070508710}
-  - component: {fileID: 8248796633219146009}
   m_Layer: 5
   m_Name: ExitButton
   m_TagString: Untagged
@@ -854,20 +838,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 1
---- !u!114 &8248796633219146009
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5818336154436379987}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 94f1246c4ca9853418d2e148aa12a3e2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::HighlightButtonText
-  textToChange: {fileID: 5806794983638270195}
-  color: {r: 0.7830189, g: 0.40038267, b: 0.2696244, a: 1}
 --- !u!1 &5877714849933160761
 GameObject:
   m_ObjectHideFlags: 0
@@ -880,7 +850,6 @@ GameObject:
   - component: {fileID: 1227881630146273527}
   - component: {fileID: 3002508505391961958}
   - component: {fileID: 2399714985414525910}
-  - component: {fileID: 5046054302760963127}
   m_Layer: 5
   m_Name: StartButton
   m_TagString: Untagged
@@ -1002,20 +971,6 @@ MonoBehaviour:
           m_StringArgument: PauseScreen
           m_BoolArgument: 0
         m_CallState: 1
---- !u!114 &5046054302760963127
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5877714849933160761}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 94f1246c4ca9853418d2e148aa12a3e2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::HighlightButtonText
-  textToChange: {fileID: 2419717174903300259}
-  color: {r: 0.7830189, g: 0.40038267, b: 0.2696244, a: 1}
 --- !u!1 &5937650496429210023
 GameObject:
   m_ObjectHideFlags: 0
