@@ -81,7 +81,7 @@ public class UniversalUIManager : MonoBehaviour
     {
         mainCam = Camera.main;
         
-        Canvas canvas = FindFirstObjectByType<Canvas>();
+        Canvas canvas = transform.parent.gameObject.GetComponent<Canvas>(); 
         if (canvas == null) return;
 
         Transform canvasTransform = canvas.transform;
