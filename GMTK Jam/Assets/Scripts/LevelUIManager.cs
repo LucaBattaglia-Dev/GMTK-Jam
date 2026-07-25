@@ -1,6 +1,7 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.SceneManagement;
+using System.Collections.Generic;
 
 //Also keeps track of the player's scoare
 public class LevelUIManager : MonoBehaviour
@@ -20,6 +21,8 @@ public class LevelUIManager : MonoBehaviour
     public float Distance {get{return distance;} set{distance = value;}}
     private Transform playerTracker; 
     private Transform player; 
+    private List<System.Type> currentPickups = new List<System.Type>(); 
+    private List<Pickup> currentPickupScripts = new List<Pickup>();
 
     static private LevelUIManager instance;
     static public LevelUIManager Instance
@@ -61,8 +64,24 @@ public class LevelUIManager : MonoBehaviour
     }
 
     public void InstantiateCooldownUI(Pickup pickup){
-        GameObject newObject = Instantiate(powerupDurationPrefab, powerupCooldownParent.transform);
-        newObject.GetComponent<PickupCooldown>().Setup(pickup); 
+        if(currentPickups.Contains(pickup.GetType())){ //check if it's a pickup we already have
+            int index = currentPickups.IndexOf(pickup.GetType());
+            currentPickupScripts[index].RestartTimer();
+        } else {
+            currentPickups.Add(pickup.GetType());
+            currentPickupScripts.Add(pickup);
+            GameObject newObject = Instantiate(powerupDurationPrefab, powerupCooldownParent.transform);
+            newObject.GetComponent<PickupCooldown>().Setup(pickup);
+        } 
+    }
+
+    //removes a pickup from the list that tracks them
+    public void RemovePickup(Pickup pickup){
+        if(currentPickups.Contains(pickup.GetType())){ //check if it's a pickup we already have
+            int index = currentPickups.IndexOf(pickup.GetType());
+            currentPickupScripts.RemoveAt(index);
+            currentPickups.RemoveAt(index);
+        }
     }
 
     public void UpdateDistanceUI(Transform uiParent, TMP_Text[] textArray){

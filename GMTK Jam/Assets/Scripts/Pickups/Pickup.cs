@@ -10,9 +10,11 @@ public class Pickup : MonoBehaviour
     [SerializeField] public Sprite pickupIcon;
     [SerializeField] public float powerupDuration;
     private float currentDuration;
-    public float CurrentDuration {get{return currentDuration;}}
+    public float CurrentDuration {get{return currentDuration;} set{currentDuration = value;}}
     private bool isActive = false; 
     private float originalYPos;
+    private PickupCooldown cooldownUI;
+    public PickupCooldown CooldownUI {get{return cooldownUI;} set{cooldownUI = value;}}
     AudioSource audioPlayer;
 
     //Animation Params
@@ -28,6 +30,14 @@ public class Pickup : MonoBehaviour
         floatSequence.Append(transform.DOMoveY(originalYPos + floatDistance, floatDuration/2).SetEase(Ease.InOutSine));
         floatSequence.Append(transform.DOMoveY(originalYPos, floatDuration/2).SetEase(Ease.InOutSine));
         floatSequence.SetLoops(-1, LoopType.Yoyo);
+    }
+
+    //For when you get a pickup that you already have. Resets the timer and color
+    public void RestartTimer(){
+        currentDuration = powerupDuration;
+        if(cooldownUI){
+            cooldownUI.ResetColor(); 
+        }
     }
 
     private void OnTriggerEnter(Collider collision){
@@ -47,6 +57,7 @@ public class Pickup : MonoBehaviour
             currentDuration -= Time.unscaledDeltaTime; 
             if(currentDuration <= 0){
                 OnDespawn();
+                LevelUIManager.Instance.RemovePickup(this);
                 Destroy(this.gameObject);
             }
         }
