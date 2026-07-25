@@ -282,7 +282,7 @@ MonoBehaviour:
   groundDrag: 2.5
   jumpForce: 12.5
   airMultiplier: 0.5
-  sprintTime: 3
+  sprintTime: 2
   sprintRegenPerSecond: 1.5
   whatIsWall:
     serializedVersion: 2
