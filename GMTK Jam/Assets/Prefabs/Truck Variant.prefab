@@ -1873,7 +1873,7 @@ MonoBehaviour:
   maxOvershotDistance: 2
   roadLayer:
     serializedVersion: 2
-    m_Bits: 72
+    m_Bits: 200
   buildingLayer:
     serializedVersion: 2
     m_Bits: 128
@@ -1884,4 +1884,7 @@ MonoBehaviour:
   visionWidth: 2.5
   minBuildingImpactSpeed: 2
   minTruckImpactSpeed: 2
+  player: {fileID: 0}
+  activeRange: 60
+  despawnDistance: 90
   showDebugLines: 1

@@ -21,60 +21,76 @@ public class TruckDriver : MonoBehaviour
     [Header("Waypoint Arrival Ranges")]
     public float minWaypointTolerance = 4.0f;
     public float maxWaypointTolerance = 9.0f;
-    public float maxOvershotDistance = 2.0f; // Max meters behind Z-axis before abandoning point
+    public float maxOvershotDistance = 2.0f; 
     public LayerMask roadLayer;
 
     [Header("Crash & Vision Settings")]
     public LayerMask buildingLayer;
     public LayerMask truckLayer;
-
-    [Tooltip("Distance in front of the truck to cast vision rays for buildings")]
     public float visionDistance = 2.5f;
-    
-    [Tooltip("Width spread of the front bumper vision rays")]
     public float visionWidth = 1.5f;
-
-    [Tooltip("Impact speed required to trigger a crash when hitting a building")]
     public float minBuildingImpactSpeed = 1.0f;
-
-    [Tooltip("Higher impact speed required to trigger a crash when hitting another truck")]
     public float minTruckImpactSpeed = 7.0f;
+
+    [Header("Distance & Stream Settings")]
+    public Transform player;
+    public float activeRange = 60f;      // Distance within which normal AI/waypoints run
+    public float despawnDistance = 90f;  // Distance at which the truck gets destroyed
 
     [Header("Debug Visualization")]
     public bool showDebugLines = true;
 
-    // Fixed constant speed set once at spawn
     private float constantMoveSpeed;
-
-    // Dynamic leg-by-leg values
     private float currentTurnSpeed;
     private float currentWaypointTolerance;
     private float currentRoadWidth;
 
     private Vector3 currentTargetPoint;
     private bool hasValidTarget = false;
-    private bool isCrashed = false; // Prevents further movement once crashed
+    private bool isCrashed = false;
 
     private void Start()
     {
-        // 1. Roll the truck's permanent movement speed ONCE
-        constantMoveSpeed = Random.Range(minMoveSpeed, maxMoveSpeed);
+        // Find player automatically if unassigned
+        if (player == null)
+        {
+            GameObject pObj = GameObject.FindGameObjectWithTag("Player");
+            if (pObj != null) player = pObj.transform;
+        }
 
-        // 2. Roll initial leg stats & first waypoint
+        constantMoveSpeed = Random.Range(minMoveSpeed, maxMoveSpeed);
         RandomizeLegStats();
         GenerateNextWaypoint();
     }
 
     private void Update()
     {
-        // Stop all processing if the truck has crashed
         if (isCrashed) return;
 
-        // 1. Check forward vision rays for immediate wall/building detection
+        // Check distance to player for despawning or switching behavior
+        if (player != null)
+        {
+            float distToPlayer = Vector3.Distance(transform.position, player.position);
+
+            // Despawn if too far away
+            if (distToPlayer > despawnDistance)
+            {
+                Destroy(gameObject);
+                return;
+            }
+
+            // If player is too far away, enter Passive State (drive straight smoothly, slower)
+            if (distToPlayer > activeRange)
+            {
+                DriveStraightPassive();
+                return;
+            }
+        }
+
+        // --- Active State (Player is in range) ---
         CheckForwardVision();
         if (isCrashed) return;
 
-        // 2. Waypoint navigation
         if (!hasValidTarget)
         {
             GenerateNextWaypoint();
@@ -83,6 +99,13 @@ public class TruckDriver : MonoBehaviour
 
         MoveAndSteer();
         CheckWaypointDistance();
+    }
+
+    private void DriveStraightPassive()
+    {
+        // Drive straight forward at a reduced, steady speed to prevent erratic swerving when off-screen
+        float passiveSpeed = constantMoveSpeed * 0.75f;
+        transform.Translate(Vector3.forward * passiveSpeed * Time.deltaTime);
     }
 
     private void MoveAndSteer()
@@ -101,10 +124,7 @@ public class TruckDriver : MonoBehaviour
 
     private void CheckForwardVision()
     {
-        // Raycast origin at truck center height (~1 unit up)
         Vector3 centerOrigin = transform.position + Vector3.up * 1f;
-
-        // Cast 3 forward rays: Center, Left, and Right bumper offsets
         Vector3[] rayOrigins = new Vector3[]
         {
             centerOrigin,
@@ -129,21 +149,13 @@ public class TruckDriver : MonoBehaviour
         int hitLayer = collision.gameObject.layer;
         float impactSpeed = collision.relativeVelocity.magnitude;
 
-        // 1. Collision with Building (Slight to moderate hit threshold)
         if (((1 << hitLayer) & buildingLayer.value) != 0)
         {
-            if (impactSpeed >= minBuildingImpactSpeed)
-            {
-                TriggerCrash();
-            }
+            if (impactSpeed >= minBuildingImpactSpeed) TriggerCrash();
         }
-        // 2. Collision with Another Truck (Requires harder/more forceful impact)
         else if (((1 << hitLayer) & truckLayer.value) != 0)
         {
-            if (impactSpeed >= minTruckImpactSpeed)
-            {
-                TriggerCrash();
-            }
+            if (impactSpeed >= minTruckImpactSpeed) TriggerCrash();
         }
     }
 
@@ -157,12 +169,8 @@ public class TruckDriver : MonoBehaviour
     private void CheckWaypointDistance()
     {
         float distanceToTarget = Vector3.Distance(transform.position, currentTargetPoint);
-
-        // Convert target point into truck's local space to track Z axis position
         Vector3 localTargetPoint = transform.InverseTransformPoint(currentTargetPoint);
 
-        // Condition 1: Reached point within tolerance distance
-        // Condition 2: Point is behind truck's local Z-axis by more than maxOvershotDistance
         if (distanceToTarget <= currentWaypointTolerance || localTargetPoint.z < -maxOvershotDistance)
         {
             RandomizeLegStats(); 
@@ -199,7 +207,6 @@ public class TruckDriver : MonoBehaviour
             }
         }
 
-        // Fallback straight line
         currentTargetPoint = transform.position + (transform.forward * minForwardDistance);
         hasValidTarget = true;
     }
@@ -208,7 +215,6 @@ public class TruckDriver : MonoBehaviour
     {
         if (!showDebugLines) return;
 
-        // Draw forward vision rays in Scene View
         Gizmos.color = isCrashed ? Color.red : Color.cyan;
         Vector3 centerOrigin = transform.position + Vector3.up * 2.5f;
         Gizmos.DrawRay(centerOrigin, transform.forward * visionDistance);
