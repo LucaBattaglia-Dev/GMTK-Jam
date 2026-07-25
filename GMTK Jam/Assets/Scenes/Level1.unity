@@ -275,8 +275,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 550c07db66590d647a50a8a4da9721f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
-  walkSpeed: 8
-  sprintSpeed: 15
+  walkSpeed: 12.5
+  sprintSpeed: 20
   wallRunSpeed: 9
   superSpeed: 40
   groundDrag: 2.5
@@ -286,9 +286,9 @@ MonoBehaviour:
   sprintRegenPerSecond: 1.5
   whatIsWall:
     serializedVersion: 2
-    m_Bits: 192
+    m_Bits: 193
   wallCheckDistance: 2
-  wallRunSpeedForce: 110
+  wallRunSpeedForce: 100
   wallJumpUpForce: 12.5
   wallJumpSideForce: 15
   maxWallRunTime: 2
@@ -1013,6 +1013,7 @@ GameObject:
   - component: {fileID: 1343558350}
   - component: {fileID: 1343558351}
   - component: {fileID: 1343558352}
+  - component: {fileID: 1343558353}
   m_Layer: 3
   m_Name: LevelGen
   m_TagString: Untagged
@@ -1050,6 +1051,16 @@ MonoBehaviour:
   player: {fileID: 135714829}
   segmentsAhead: 35
   despawnDistanceSegments: 35
+  truckPrefab: {fileID: 7640037923345900238, guid: 5b0f4b28ee04ec742a887ad34d03d62d, type: 3}
+  trafficSpawnInterval: 4
+  minTrucksPerWave: 1
+  maxTrucksPerWave: 5
+  minSpawnDistance: 20
+  maxSpawnDistance: 50
+  truckCheckRadius: 3
+  truckCheckLayer:
+    serializedVersion: 2
+    m_Bits: 64
   buildingPrefabs:
   - prefab: {fileID: 6297888782694698733, guid: 7a5692d71da3f9d46ab9d6d16c980012, type: 3}
     rotation: {x: 0, y: 90, z: 0}
@@ -1177,10 +1188,43 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TrafficSpawner
   truckPrefab: {fileID: 7640037923345900238, guid: 5b0f4b28ee04ec742a887ad34d03d62d, type: 3}
   player: {fileID: 135714829}
-  spawnInterval: 3.5
-  spawnDistanceAhead: 70
-  spawnDistanceBehind: 70
-  spawnSideOffsetRange: 3
+  spawnInterval: 1
+  minTrucksPerWave: 2
+  maxTrucksPerWave: 5
+  minSpawnDistance: 80
+  maxSpawnDistance: 160
+  laneXPositions:
+  - -12.5
+  - -7.5
+  - -2.5
+  - 2.5
+  - 7.5
+  - 12.5
+  truckCheckRadius: 4
+  truckCheckLayer:
+    serializedVersion: 2
+    m_Bits: 64
+--- !u!65 &1343558353
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1343558349}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 12, y: 11, z: 2}
+  m_Center: {x: -1.5, y: 5, z: 14.5}
 --- !u!1001 &1526737711
 PrefabInstance:
   m_ObjectHideFlags: 0
