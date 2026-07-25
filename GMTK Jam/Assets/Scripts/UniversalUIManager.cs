@@ -241,6 +241,7 @@ public class UniversalUIManager : MonoBehaviour
 
     public void StartGame(string targetScene)
     {
+        BGMManager.Instance.ChangeToLevelMusic();
         if (DoesSceneExist(targetScene))
         {
             SceneManager.LoadScene(targetScene);
@@ -292,6 +293,7 @@ public class UniversalUIManager : MonoBehaviour
 
     public void GoToMainMenu(string targetScene)
     {
+        BGMManager.Instance.ChangeToMenuMusic();
         Time.timeScale = 1f; 
         if (DoesSceneExist(targetScene))
         {
