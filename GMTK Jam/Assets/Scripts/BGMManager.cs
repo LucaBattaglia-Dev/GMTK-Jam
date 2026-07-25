@@ -5,6 +5,7 @@ public class BGMManager : MonoBehaviour
     static private BGMManager instance;
     [SerializeField] public AudioClip menuBGM;
     [SerializeField] public AudioClip levelBGM;
+    [SerializeField] private bool isLevel = false; 
 
     [SerializeField] private float bgmVolume;
     public float BGMVolume {
@@ -47,7 +48,11 @@ public class BGMManager : MonoBehaviour
 
     private void Start()
     {
-        MusicChange(menuBGM, 1);
+        if(isLevel){
+            MusicChange(levelBGM, bgmVolume);
+        } else {
+            MusicChange(menuBGM, bgmVolume);
+        }
     }
 
     public void BackgroundMusicToggle(AudioSource source) //give it a reference to a source, and it toggles it
