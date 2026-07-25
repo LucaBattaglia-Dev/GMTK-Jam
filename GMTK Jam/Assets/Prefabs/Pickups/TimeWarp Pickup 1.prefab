@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2716333885310585563}
   - component: {fileID: 3498562712336463863}
+  - component: {fileID: 1370572403290090864}
   m_Layer: 0
   m_Name: TimeWarp Pickup 1
   m_TagString: Untagged
@@ -50,6 +51,29 @@ MonoBehaviour:
   pickupIcon: {fileID: 21300000, guid: fc37e5725415d454eb594f667d6614a2, type: 3}
   powerupDuration: 5
   newTimeScale: 0.2
+--- !u!136 &1370572403290090864
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 638307264866404510}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.19
+  m_Height: 0.72
+  m_Direction: 1
+  m_Center: {x: 0.06, y: 0.18, z: 0.09}
 --- !u!1 &1901347514657832312
 GameObject:
   m_ObjectHideFlags: 0
@@ -61,7 +85,6 @@ GameObject:
   - component: {fileID: 9094072648718381210}
   - component: {fileID: 3571503422146156423}
   - component: {fileID: 5504986449420414388}
-  - component: {fileID: 7355587253139855816}
   m_Layer: 9
   m_Name: TimeWarp Pickup
   m_TagString: Untagged
@@ -141,26 +164,3 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!136 &7355587253139855816
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1901347514657832312}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.1
-  m_Height: 0.37
-  m_Direction: 1
-  m_Center: {x: 9.217862e-10, y: 0.12372005, z: -0.0000000018435724}
