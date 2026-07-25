@@ -1,17 +1,22 @@
-using UnityEngine;
 using DG.Tweening;
+using System.Diagnostics;
+using UnityEngine;
 
 //TODO: finish code to turn off renderer
 //Parent class for pickups, also handles animating them
 public class Pickup : MonoBehaviour
 {
-    [SerializeField] public AudioClip pickupSFX; 
+    [SerializeField] public AudioClip pickupSFX;
+    [SerializeField] public float SFXVolume;
     [SerializeField] public Sprite pickupIcon;
     [SerializeField] public float powerupDuration;
     private float currentDuration;
     public float CurrentDuration {get{return currentDuration;}}
     private bool isActive = false; 
     private float originalYPos;
+    AudioSource audioPlayer;
+
+   
 
     //Animation Params
     private float floatDistance = 0.4f;
@@ -37,6 +42,7 @@ public class Pickup : MonoBehaviour
     }
 
     public void PlaySFX(){
+        SFXManager.Instance.PlaySFX(pickupSFX, SFXVolume);
     }
 
     void FixedUpdate(){

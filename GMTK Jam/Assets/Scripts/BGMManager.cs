@@ -47,7 +47,7 @@ public class BGMManager : MonoBehaviour
 
     private void Start()
     {
-        MusicChange(menuBGM, 1);
+        MusicChange(menuBGM, bgmVolume);
     }
 
     public void BackgroundMusicToggle(AudioSource source) //give it a reference to a source, and it toggles it

@@ -8,6 +8,7 @@ public class TimeManager : MonoBehaviour
     [SerializeField] private float lowTimeThreshold; //When will the timer turn red
     [SerializeField] private Color lowTimeColor; 
     private float currentTime;
+    public float timeSlowMultiplier = 1f;
 
     [Header("UI Elements")]
     [SerializeField] private TMP_Text timeText; 
@@ -41,7 +42,7 @@ public class TimeManager : MonoBehaviour
 
     void FixedUpdate()
     {
-        currentTime -= (Time.deltaTime);  
+        currentTime -= (Time.deltaTime)*timeSlowMultiplier;  
         UpdateTime(); 
     }
 

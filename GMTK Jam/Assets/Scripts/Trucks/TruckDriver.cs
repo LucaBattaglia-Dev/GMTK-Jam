@@ -44,7 +44,7 @@ public class TruckDriver : MonoBehaviour
     public bool showDebugLines = true;
 
     // Fixed constant speed set once at spawn
-    private float constantMoveSpeed;
+    public float constantMoveSpeed;
 
     // Dynamic leg-by-leg values
     private float currentTurnSpeed;
