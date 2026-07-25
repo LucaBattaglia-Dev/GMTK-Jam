@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 6558397538090197391}
   - component: {fileID: 1501318752316144909}
   - component: {fileID: 1571458901332168548}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Extra Time Pickup
   m_TagString: Untagged
   m_Icon: {fileID: 0}

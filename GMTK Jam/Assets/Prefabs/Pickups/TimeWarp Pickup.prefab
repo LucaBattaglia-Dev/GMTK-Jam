@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 5672295377044708400}
   - component: {fileID: 5882123816654479594}
   - component: {fileID: 1473433202306827695}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: TimeWarp Pickup
   m_TagString: Untagged
   m_Icon: {fileID: 0}
