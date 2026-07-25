@@ -16,7 +16,7 @@ public class Pickup : MonoBehaviour
     AudioSource audioPlayer;
 
     //Animation Params
-    private float floatDistance = 0.4f;
+    private float floatDistance = 0.8f;
     private float floatDuration = 2f;
 
     #region class methods
