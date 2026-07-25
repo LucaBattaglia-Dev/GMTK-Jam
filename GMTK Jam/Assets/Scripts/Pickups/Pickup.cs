@@ -1,5 +1,4 @@
 using DG.Tweening;
-using System.Diagnostics;
 using UnityEngine;
 
 //TODO: finish code to turn off renderer
@@ -15,8 +14,6 @@ public class Pickup : MonoBehaviour
     private bool isActive = false; 
     private float originalYPos;
     AudioSource audioPlayer;
-
-   
 
     //Animation Params
     private float floatDistance = 0.4f;

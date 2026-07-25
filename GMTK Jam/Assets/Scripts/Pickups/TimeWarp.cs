@@ -8,18 +8,11 @@ public class TimeWarp : Pickup
     public override void OnPickup(){
         //Add slowing down trucks & player
         LevelUIManager.Instance.InstantiateCooldownUI(this);
-        TimeManager.Instance.timeSlowMultiplier = newTimeScale;
-        
-
-
-
-
-
+        TruckDriver.GlobalSpeedMultiplier = 0.1f;
     }
 
     public override void OnDespawn(){
         //Add slowing down trucks & player
-        TimeManager.Instance.timeSlowMultiplier = 1f;
-        
+        TruckDriver.GlobalSpeedMultiplier = 1f;
     }
 }

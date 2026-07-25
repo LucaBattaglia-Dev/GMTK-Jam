@@ -191,7 +191,6 @@ public class UniversalUIManager : MonoBehaviour
             masterVolumeSlider.onValueChanged.AddListener(SetMasterVolume);
             float savedVol = PlayerPrefs.GetFloat("MasterVolume", 1f);
             masterVolumeSlider.value = savedVol;
-            Debug.Log(savedVol);
             SetMasterVolume(savedVol);
         }
 
