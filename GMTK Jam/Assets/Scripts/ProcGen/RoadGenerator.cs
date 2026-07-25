@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(BoxCollider))]
 public class RoadGenerator : MonoBehaviour
 {
     [System.Serializable]
@@ -34,12 +35,41 @@ public class RoadGenerator : MonoBehaviour
     [Tooltip("Segments further behind than this number will be destroyed (> 12)")]
     [SerializeField] private int despawnDistanceSegments = 12;
 
+    [Header("Traffic Spawning Ranges & Settings")]
+    [Tooltip("Drag your Truck Prefab here")]
+    [SerializeField] private GameObject truckPrefab;
+    [Tooltip("Time interval in seconds between traffic spawn waves")]
+    [SerializeField] private float trafficSpawnInterval = 3.0f;
+    [Tooltip("Minimum number of trucks to spawn per wave")]
+    [SerializeField] private int minTrucksPerWave = 1;
+    [Tooltip("Maximum number of trucks to spawn per wave")]
+    [SerializeField] private int maxTrucksPerWave = 5;
+    [Tooltip("Minimum distance away from the player trucks are allowed to spawn")]
+    [SerializeField] private float minSpawnDistance = 20f;
+    [Tooltip("Maximum distance away from the player trucks are allowed to spawn")]
+    [SerializeField] private float maxSpawnDistance = 50f;
+    [Tooltip("Radius of the overlap check to prevent trucks from spawning on top of each other")]
+    [SerializeField] private float truckCheckRadius = 3.0f;
+    [Tooltip("Layer mask used to check if a spawn point is already blocked by another truck")]
+    [SerializeField] private LayerMask truckCheckLayer;
+
     [Header("Building Settings")]
     [Tooltip("Pool of building prefabs with individual sizing, offset, and rotation settings")]
     [SerializeField] private BuildingConfig[] buildingPrefabs = new BuildingConfig[15];
 
     [Tooltip("Gap space between buildings in tile units (0.25 = a quarter tile space)")]
     [SerializeField] private float buildingSpacingTiles = 0.25f;
+
+    [Tooltip("Moves all front-row buildings closer to the road (20 units = 4 tiles)")]
+    [SerializeField] private float buildingProximityOffset = 20.0f;
+
+    [Header("Multi-Row Building Settings")]
+    [Tooltip("Total number of building rows deep on each side of the road (e.g., 3, 5, 9)")]
+    [Min(1)]
+    [SerializeField] private int buildingRowsCount = 2;
+
+    [Tooltip("Distance step outward between each consecutive row of buildings")]
+    [SerializeField] private float rowSpacingDistance = 25.0f;
 
     [Header("Sidewalk Settings (Shared for Left & Right)")]
     [SerializeField] private TileConfig sidewalk;
@@ -69,16 +99,25 @@ public class RoadGenerator : MonoBehaviour
     private readonly Dictionary<int, GameObject> activeSegments = new Dictionary<int, GameObject>();
     private int highestSpawnedIndex = 0;
 
-    // Independent Z position trackers for building placement
-    private float nextLeftBuildingZ = 0f;
-    private float nextRightBuildingZ = 0f;
+    // Dynamic lists to track independent Z positions and last building indices for each row
+    private readonly List<float> leftRowNextZ = new List<float>();
+    private readonly List<float> rightRowNextZ = new List<float>();
+    private readonly List<int> leftRowLastIndex = new List<int>();
+    private readonly List<int> rightRowLastIndex = new List<int>();
 
-    // Prevent duplicate adjacent buildings
-    private int lastLeftBuildingIndex = -1;
-    private int lastRightBuildingIndex = -1;
+    // Spawner Activation State
+    private bool isSpawnerActivated = false;
+    private float trafficTimer = 0f;
 
     private void Start()
     {
+        // Ensure BoxCollider is set as a trigger automatically
+        BoxCollider boxCol = GetComponent<BoxCollider>();
+        if (boxCol != null)
+        {
+            boxCol.isTrigger = true;
+        }
+
         if (player == null)
         {
             GameObject playerObj = GameObject.FindWithTag("Player");
@@ -93,14 +132,58 @@ public class RoadGenerator : MonoBehaviour
             }
         }
 
+        InitializeRowTrackers();
         UpdateEndlessRoad();
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        // Activate traffic spawning when player enters the trigger box collider
+        if (!isSpawnerActivated && other.CompareTag("Player"))
+        {
+            isSpawnerActivated = true;
+            Debug.Log("Player triggered traffic spawner!");
+        }
     }
 
     private void Update()
     {
         if (player == null) return;
 
+        // Automatically update tracker lists if buildingRowsCount is changed in the Inspector during play
+        if (leftRowNextZ.Count != buildingRowsCount)
+        {
+            InitializeRowTrackers();
+        }
+
         UpdateEndlessRoad();
+
+        // Handle Traffic Spawning only if activated by the trigger box
+        if (isSpawnerActivated && truckPrefab != null)
+        {
+            trafficTimer += Time.deltaTime;
+            if (trafficTimer >= trafficSpawnInterval)
+            {
+                trafficTimer = 0f;
+                SpawnChaoticTrafficWave();
+            }
+        }
+    }
+
+    private void InitializeRowTrackers()
+    {
+        leftRowNextZ.Clear();
+        rightRowNextZ.Clear();
+        leftRowLastIndex.Clear();
+        rightRowLastIndex.Clear();
+
+        for (int i = 0; i < buildingRowsCount; i++)
+        {
+            leftRowNextZ.Add(0f);
+            rightRowNextZ.Add(0f);
+            leftRowLastIndex.Add(-1);
+            rightRowLastIndex.Add(-1);
+        }
     }
 
     private void UpdateEndlessRoad()
@@ -119,17 +202,28 @@ public class RoadGenerator : MonoBehaviour
         }
         highestSpawnedIndex = Mathf.Max(highestSpawnedIndex, targetMaxSegment);
 
-        // 3. Generate buildings independently ahead on both sides
+        // 3. Generate buildings independently across all rows ahead on both sides
         float targetMaxZ = targetMaxSegment * segmentLength;
 
-        while (nextLeftBuildingZ < targetMaxZ)
+        for (int r = 0; r < buildingRowsCount; r++)
         {
-            SpawnBuilding(isLeft: true, ref nextLeftBuildingZ, ref lastLeftBuildingIndex);
-        }
+            while (leftRowNextZ[r] < targetMaxZ)
+            {
+                float currentZ = leftRowNextZ[r];
+                int lastIdx = leftRowLastIndex[r];
+                SpawnBuildingRow(isLeft: true, rowIndex: r, ref currentZ, ref lastIdx);
+                leftRowNextZ[r] = currentZ;
+                leftRowLastIndex[r] = lastIdx;
+            }
 
-        while (nextRightBuildingZ < targetMaxZ)
-        {
-            SpawnBuilding(isLeft: false, ref nextRightBuildingZ, ref lastRightBuildingIndex);
+            while (rightRowNextZ[r] < targetMaxZ)
+            {
+                float currentZ = rightRowNextZ[r];
+                int lastIdx = rightRowLastIndex[r];
+                SpawnBuildingRow(isLeft: false, rowIndex: r, ref currentZ, ref lastIdx);
+                rightRowNextZ[r] = currentZ;
+                rightRowLastIndex[r] = lastIdx;
+            }
         }
 
         // 4. Despawn segments > 12 tiles behind player (cleans up associated buildings automatically)
@@ -195,7 +289,55 @@ public class RoadGenerator : MonoBehaviour
         activeSegments.Add(zIndex, rowParent);
     }
 
-    private void SpawnBuilding(bool isLeft, ref float currentZ, ref int lastIndex)
+    private void SpawnChaoticTrafficWave()
+    {
+        int trucksToSpawn = Random.Range(minTrucksPerWave, maxTrucksPerWave + 1);
+
+        for (int i = 0; i < trucksToSpawn; i++)
+        {
+            TrySpawnSingleTruck();
+        }
+    }
+
+    private void TrySpawnSingleTruck()
+    {
+        float roadCenter = transform.position.x;
+        float[] laneOffsets = new float[] 
+        { 
+            roadCenter - (roadTileWidth * 1.5f), 
+            roadCenter - (roadTileWidth * 0.5f), 
+            roadCenter + (roadTileWidth * 0.5f), 
+            roadCenter + (roadTileWidth * 1.5f) 
+        };
+
+        // Shuffle lane options for randomness
+        for (int i = 0; i < laneOffsets.Length; i++)
+        {
+            int rnd = Random.Range(0, laneOffsets.Length);
+            float temp = laneOffsets[rnd];
+            laneOffsets[rnd] = laneOffsets[i];
+            laneOffsets[i] = temp;
+        }
+
+        bool spawnAhead = Random.value > 0.5f;
+        float distanceOffset = Random.Range(minSpawnDistance, maxSpawnDistance);
+        float targetZ = player.position.z + (spawnAhead ? distanceOffset : -distanceOffset);
+
+        foreach (float laneX in laneOffsets)
+        {
+            Vector3 candidatePos = new Vector3(laneX, transform.position.y, targetZ);
+
+            bool isSpotBlocked = Physics.CheckSphere(candidatePos, truckCheckRadius, truckCheckLayer);
+
+            if (!isSpotBlocked)
+            {
+                Instantiate(truckPrefab, candidatePos, transform.rotation);
+                return;
+            }
+        }
+    }
+
+    private void SpawnBuildingRow(bool isLeft, int rowIndex, ref float currentZ, ref int lastIndex)
     {
         if (buildingPrefabs == null || buildingPrefabs.Length == 0) return;
 
@@ -205,17 +347,13 @@ public class RoadGenerator : MonoBehaviour
 
         BuildingConfig bConfig = buildingPrefabs[bgIndex];
 
-        // Sanity check to avoid zero or negative dimensions
         float lengthInTiles = bConfig.lengthInTiles > 0 ? bConfig.lengthInTiles : 1f;
         float widthInTiles = bConfig.widthInTiles > 0 ? bConfig.widthInTiles : 1f;
 
         float buildingLengthUnits = lengthInTiles * segmentLength;
         float spacingUnits = buildingSpacingTiles * segmentLength;
 
-        // Position building center along Z
         float centerZ = currentZ + (buildingLengthUnits * 0.5f);
-
-        // Find corresponding row parent segment for organized hierarchy and cleanup
         int segmentZIndex = Mathf.FloorToInt(currentZ / segmentLength);
 
         if (activeSegments.TryGetValue(segmentZIndex, out GameObject rowParent))
@@ -225,29 +363,57 @@ public class RoadGenerator : MonoBehaviour
             float rightCurbX = startX + (roadTileWidth * 2.0f) + (curbTileWidth * 0.5f);
 
             float buildingX;
+            Vector3 targetRotation = bConfig.rotation;
+            Vector3 targetOffset = bConfig.offset;
+
+            float rowOffset = rowIndex * rowSpacingDistance;
+
             if (isLeft)
             {
                 float farLeftSidewalkX = leftCurbX - (curbTileWidth * 0.5f) - (sidewalkTileWidth * sidewalkCount);
                 buildingX = farLeftSidewalkX - (widthInTiles * roadTileWidth * 0.5f);
+                buildingX += buildingProximityOffset;
+                buildingX -= rowOffset;
             }
             else
             {
                 float farRightSidewalkX = rightCurbX + (curbTileWidth * 0.5f) + (sidewalkTileWidth * sidewalkCount);
                 buildingX = farRightSidewalkX + (widthInTiles * roadTileWidth * 0.5f);
+                buildingX -= buildingProximityOffset;
+                buildingX += rowOffset;
+
+                targetRotation.y += 180f;
+
+                targetOffset.x = -targetOffset.x;
+                targetOffset.z = -targetOffset.z;
             }
 
             Vector3 basePosition = new Vector3(buildingX, transform.position.y, centerZ);
-            Vector3 finalPosition = basePosition + bConfig.offset;
-            Quaternion finalRotation = transform.rotation * Quaternion.Euler(bConfig.rotation);
+            Vector3 finalPosition = basePosition + targetOffset;
+            Quaternion finalRotation = transform.rotation * Quaternion.Euler(targetRotation);
 
             if (bConfig.prefab != null)
             {
-                Instantiate(bConfig.prefab, finalPosition, finalRotation, rowParent.transform);
+                GameObject spawnedBuilding = Instantiate(bConfig.prefab, finalPosition, finalRotation, rowParent.transform);
+                
+                int buildingLayer = LayerMask.NameToLayer("Building");
+                if (buildingLayer != -1)
+                {
+                    SetLayerRecursively(spawnedBuilding, buildingLayer);
+                }
             }
         }
 
-        // Advance current Z tracker by the building's length + gap space
         currentZ += buildingLengthUnits + spacingUnits;
+    }
+
+    private void SetLayerRecursively(GameObject obj, int newLayer)
+    {
+        obj.layer = newLayer;
+        foreach (Transform child in obj.transform)
+        {
+            SetLayerRecursively(child.gameObject, newLayer);
+        }
     }
 
     private int GetRandomBuildingIndex(int previousIndex)

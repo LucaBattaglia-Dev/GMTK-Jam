@@ -47,7 +47,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BGMManager
   menuBGM: {fileID: 8300000, guid: f1dd20e9357d56646ad4559c8ede465c, type: 3}
   levelBGM: {fileID: 8300000, guid: 3292706a94130474f994fa8e4da54aae, type: 3}
-  bgmVolume: 0.8
+  bgmVolume: 0.5
 --- !u!82 &1987443724224055544
 AudioSource:
   m_ObjectHideFlags: 0

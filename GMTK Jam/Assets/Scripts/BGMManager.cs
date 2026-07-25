@@ -5,14 +5,10 @@ public class BGMManager : MonoBehaviour
     static private BGMManager instance;
     [SerializeField] public AudioClip menuBGM;
     [SerializeField] public AudioClip levelBGM;
-
-    [SerializeField] private float bgmVolume;
-    public float BGMVolume {
-        set {
-            bgmVolume = value;
-            source.volume = value;            
-        }
-    }
+    [SerializeField] private bool isLevel = false; 
+    float baseMultiplier = 0.75f;
+    private float bgmVolume;
+    public float BGMVolume {set {bgmVolume = value;source.volume = value;}}
     private AudioSource source;
     public AudioSource Source {get { return source; }}
 
@@ -47,7 +43,11 @@ public class BGMManager : MonoBehaviour
 
     private void Start()
     {
-        MusicChange(menuBGM, bgmVolume);
+        if(isLevel){
+            MusicChange(levelBGM, bgmVolume);
+        } else {
+            MusicChange(menuBGM, bgmVolume);
+        }
     }
 
     public void BackgroundMusicToggle(AudioSource source) //give it a reference to a source, and it toggles it
@@ -63,7 +63,7 @@ public class BGMManager : MonoBehaviour
     public void MusicChange(AudioClip clip, float volume) //change the bgm to something else
     {
         source.clip = clip;
-        source.volume = volume; //add multiplier here for volume adjustment
+        source.volume = volume * baseMultiplier; //add multiplier here for volume adjustment
         source.loop = true;
         source.Play();
     }
@@ -75,5 +75,10 @@ public class BGMManager : MonoBehaviour
 
     public void ChangeToMenuMusic(){
         MusicChange(menuBGM, bgmVolume);
+    }
+
+    public void ChangeBGMVolume(float value){
+        bgmVolume = value;
+        source.volume = bgmVolume * baseMultiplier;
     }
 }
