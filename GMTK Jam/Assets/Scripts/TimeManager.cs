@@ -8,6 +8,9 @@ public class TimeManager : MonoBehaviour
     [SerializeField] private float lowTimeThreshold; //When will the timer turn red
     [SerializeField] private Color lowTimeColor; 
     private float currentTime;
+    private float totalTime = 0;
+    public float TotalTime {get{return totalTime;}}
+    private bool gameOver = false; 
 
     [Header("UI Elements")]
     [SerializeField] private TMP_Text timeText; 
@@ -41,8 +44,21 @@ public class TimeManager : MonoBehaviour
 
     void FixedUpdate()
     {
-        currentTime -= (Time.deltaTime);  
-        UpdateTime(); 
+        if(!gameOver){
+            currentTime -= Time.deltaTime;  
+            if(currentTime <=0){
+                gameOver = true; 
+                EndLevel();
+            } else {
+                totalTime += Time.deltaTime;
+                UpdateTime(); 
+            }
+        }
+    }
+
+    public void EndLevel(){
+        timeText.text = "0";
+        LevelUIManager.Instance.GameOver();
     }
 
     //Updates the time string and checks for certain thresholds
@@ -51,8 +67,6 @@ public class TimeManager : MonoBehaviour
 
        if(currentTime < lowTimeThreshold){
             timeText.color = lowTimeColor;
-       } else if (currentTime <= 0){
-            //gameOver
        }
     }
 

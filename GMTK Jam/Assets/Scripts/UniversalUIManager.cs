@@ -191,6 +191,7 @@ public class UniversalUIManager : MonoBehaviour
             masterVolumeSlider.onValueChanged.AddListener(SetMasterVolume);
             float savedVol = PlayerPrefs.GetFloat("MasterVolume", 1f);
             masterVolumeSlider.value = savedVol;
+            Debug.Log(savedVol);
             SetMasterVolume(savedVol);
         }
 
@@ -208,6 +209,9 @@ public class UniversalUIManager : MonoBehaviour
 
     public void SetMasterVolume(float value)
     {
+        //Kat's new code =========
+        BGMManager.Instance.ChangeBGMVolume(value);
+        
         if (audioMixer == null) return;
         float dB = value > 0 ? Mathf.Log10(value) * 20f : -80f;
         audioMixer.SetFloat(masterVolumeParameterName, dB);
@@ -241,6 +245,7 @@ public class UniversalUIManager : MonoBehaviour
 
     public void StartGame(string targetScene)
     {
+        BGMManager.Instance.ChangeToLevelMusic();
         if (DoesSceneExist(targetScene))
         {
             SceneManager.LoadScene(targetScene);
@@ -292,6 +297,7 @@ public class UniversalUIManager : MonoBehaviour
 
     public void GoToMainMenu(string targetScene)
     {
+        BGMManager.Instance.ChangeToMenuMusic();
         Time.timeScale = 1f; 
         if (DoesSceneExist(targetScene))
         {

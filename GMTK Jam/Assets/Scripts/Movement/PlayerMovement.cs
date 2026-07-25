@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
@@ -7,8 +8,8 @@ public class PlayerMovement : MonoBehaviour
     [Header("Movement Speeds")]
     public float walkSpeed = 7f;
     public float sprintSpeed = 11f;
-    public float slideSpeed = 12f;
     public float wallRunSpeed = 9f;
+    public float superSpeed = 40f;
     public float groundDrag = 5f;
     public float jumpForce = 12f;
     public float airMultiplier = 0.4f;
@@ -26,17 +27,6 @@ public class PlayerMovement : MonoBehaviour
     }
     private bool isSprinting = false;
 
-    [Header("Sliding")]
-    public float airGracePeriod = 1f;
-    public float maxSlideTime = 0.75f;
-    public float slideForce = 400f;
-    public float slideColliderHeight = 1f; // Half height collider during slide
-    public float slideStickForce = 25f; // Keeps player glued to ground
-    private float airGraceTime;
-    private float startColliderHeight;
-    private Vector3 startColliderCenter;
-    private float slideTimer;
-
     [Header("Wall Running")]
     public LayerMask whatIsWall;
     public float wallCheckDistance = 0.8f;
@@ -53,6 +43,17 @@ public class PlayerMovement : MonoBehaviour
     public float maxSlopeAngle = 45f;
     private RaycastHit slopeHit;
 
+    [Header("Special Abilities")]
+    public KeyCode superSpeedKey = KeyCode.LeftControl;
+    [Tooltip("Amount speed increases per second while sprinting in super speed mode")]
+    public float superSpeedGrowthRate = 35f;
+    private bool isSuperSpeedActive = false;
+    private float currentSpeed;
+    public float powerJumpForce = 20f;
+    public float powerJumpCooldown = 2f;
+    private float powerJumpTimer;
+    private bool hasPowerJumped;
+
     [Header("References")]
     public PlayerCam playerCam;
 
@@ -64,7 +65,7 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 moveDirection;
 
     private MovementState state;
-    private enum MovementState { Walking, Sprinting, Sliding, WallRunning, Air }
+    private enum MovementState { Walking, Sprinting, WallRunning, Air }
 
     private bool grounded;
     private RaycastHit groundHit;
@@ -84,10 +85,9 @@ public class PlayerMovement : MonoBehaviour
 
         rb.freezeRotation = true;
 
-        startColliderHeight = col.height;
-        startColliderCenter = col.center;
-
         sprintTimer = sprintTime;
+        hasPowerJumped = false;
+        currentSpeed = walkSpeed;
     }
 
     private void Update()
@@ -135,13 +135,14 @@ public class PlayerMovement : MonoBehaviour
             if (sprintTimer >= sprintTime)
                 sprintTimer = sprintTime;
         }
+
+        // Special Ability Cooldowns
+        powerJumpTimer = powerJumpTimer > 0f ? powerJumpTimer -= Time.deltaTime : 0f;
     }
 
     private void FixedUpdate()
     {
-        if (state == MovementState.Sliding)
-            SlideMovement();
-        else if (state == MovementState.WallRunning)
+        if (state == MovementState.WallRunning)
             WallRunMovement();
         else
             MovePlayer();
@@ -152,33 +153,24 @@ public class PlayerMovement : MonoBehaviour
         horizontalInput = Input.GetAxisRaw("Horizontal");
         verticalInput = Input.GetAxisRaw("Vertical");
 
-        // Jump
-        if (Input.GetButtonDown("Jump") && grounded)
+        // Toggle Super Speed
+        if (Input.GetKeyDown(superSpeedKey))
         {
-            Jump();
+            isSuperSpeedActive = !isSuperSpeedActive;
+            if (!isSuperSpeedActive)
+            {
+                currentSpeed = sprintSpeed;
+            }
         }
 
-        // Slide Trigger
-        if (Input.GetKey(KeyCode.LeftControl) && state == MovementState.Air)
+        // Jump or Power Jump
+        if (Input.GetButtonDown("Jump") && grounded)
         {
-            airGraceTime += Time.deltaTime;
-        }
-        if (Input.GetKeyUp(KeyCode.LeftControl))
-        {
-            airGraceTime = 0f;
-        }
-        if ((Input.GetKeyDown(KeyCode.LeftControl) || (airGraceTime > 0f && airGraceTime <= airGracePeriod)) && (horizontalInput != 0 || verticalInput != 0) && grounded)
-        {
-            if (airGraceTime > 0f && airGraceTime <= airGracePeriod)
+            if (Input.GetKey(KeyCode.LeftControl) && powerJumpTimer <= 0f)
             {
-                airGraceTime = 0f;
+                PowerJump();
             }
-            StartSlide();
-        }
-        if (Input.GetKeyUp(KeyCode.LeftControl) && state == MovementState.Sliding)
-        {
-            airGraceTime = 0f;
-            StopSlide();
+            else Jump();
         }
 
         // Sprint
@@ -200,21 +192,14 @@ public class PlayerMovement : MonoBehaviour
             if (Input.GetButtonDown("Jump"))
                 WallJump();
         }
-        // 2. Sliding
-        else if (state == MovementState.Sliding)
-        {
-            slideTimer -= Time.deltaTime;
-            if (slideTimer <= 0)
-                StopSlide();
-        }
-        // 3. Grounded
+        // 2. Grounded
         else if (grounded)
         {
             if (state == MovementState.WallRunning) StopWallRun();
 
             state = isSprinting && sprintTimer != 0f ? MovementState.Sprinting : MovementState.Walking;
         }
-        // 4. In Air
+        // 3. In Air
         else
         {
             if (state == MovementState.WallRunning) StopWallRun();
@@ -225,7 +210,27 @@ public class PlayerMovement : MonoBehaviour
     private void MovePlayer()
     {
         moveDirection = transform.forward * verticalInput + transform.right * horizontalInput;
-        float speed = (state == MovementState.Sprinting) ? sprintSpeed : walkSpeed;
+
+        // Speed calculation with Super Speed acceleration logic. Cap at max super speed
+        if (state == MovementState.Sprinting)
+        {
+            if (isSuperSpeedActive)
+            {
+                currentSpeed += superSpeedGrowthRate * Time.deltaTime;
+                if (currentSpeed > superSpeed) currentSpeed = superSpeed;
+            }
+            else
+            {
+                currentSpeed = sprintSpeed;
+            }
+        }
+        else if (grounded)
+        {
+            currentSpeed = walkSpeed;
+            isSuperSpeedActive = false; // Turn off super speed if you drop out of sprinting
+        }
+
+        float speed = currentSpeed;
 
         if (OnSlope())
         {
@@ -263,46 +268,6 @@ public class PlayerMovement : MonoBehaviour
             Debug.Log(totalVelocity);
         }
         rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
-    }
-
-    // --- SLIDING ---
-    private void StartSlide()
-    {
-        state = MovementState.Sliding;
-        slideTimer = maxSlideTime;
-
-        col.height = slideColliderHeight;
-        col.center = new Vector3(startColliderCenter.x, slideColliderHeight * 0.5f, startColliderCenter.z);
-
-        if (playerCam != null)
-            playerCam.SetSlide(true);
-
-        Vector3 inputDir = transform.forward * verticalInput + transform.right * horizontalInput;
-        rb.AddForce(inputDir.normalized * slideForce, ForceMode.Impulse);
-        rb.AddForce(Vector3.down * 10f, ForceMode.Impulse);
-    }
-
-    private void SlideMovement()
-    {
-        Vector3 inputDir = transform.forward * verticalInput + transform.right * horizontalInput;
-        Vector3 slideDirection = OnSlope() ? GetSlopeMoveDirection(inputDir) : inputDir.normalized;
-
-        rb.AddForce(slideDirection * slideForce, ForceMode.Force);
-        rb.AddForce(Vector3.down * slideStickForce, ForceMode.Force);
-    }
-
-    private void StopSlide()
-    {
-        col.height = startColliderHeight;
-        col.center = startColliderCenter;
-
-        if (playerCam != null)
-            playerCam.SetSlide(false);
-
-        if (grounded)
-            state = Input.GetKey(KeyCode.LeftShift) ? MovementState.Sprinting : MovementState.Walking;
-        else
-            state = MovementState.Air;
     }
 
     // --- SLOPE DETECTION ---
@@ -365,5 +330,11 @@ public class PlayerMovement : MonoBehaviour
 
         rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
         rb.AddForce(forceToApply, ForceMode.Impulse);
+    }
+
+    private void PowerJump()
+    {
+        rb.AddForce(transform.up * powerJumpForce, ForceMode.Impulse);
+        powerJumpTimer = powerJumpCooldown;
     }
 }
