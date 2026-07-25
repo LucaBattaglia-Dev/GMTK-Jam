@@ -793,18 +793,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
   walkSpeed: 8
   sprintSpeed: 15
-  slideSpeed: 15
   wallRunSpeed: 9
+  superSpeed: 20
   groundDrag: 2.5
   jumpForce: 12
   airMultiplier: 0.4
   sprintTime: 3
   sprintRegenPerSecond: 1.5
-  airGracePeriod: 1
-  maxSlideTime: 1
-  slideForce: 25
-  slideColliderHeight: 1
-  slideStickForce: 25
   whatIsWall:
     serializedVersion: 2
     m_Bits: 8
@@ -819,6 +814,10 @@ MonoBehaviour:
     m_Bits: 1
   playerHeight: 2
   maxSlopeAngle: 45
+  superSpeedKey: 118
+  superSpeedGrowthRate: 35
+  powerJumpForce: 20
+  powerJumpCooldown: 2
   playerCam: {fileID: 0}
 --- !u!54 &873496003
 Rigidbody:

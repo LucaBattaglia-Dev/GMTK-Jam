@@ -14,10 +14,10 @@ OcclusionCullingSettings:
 RenderSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 10
-  m_Fog: 0
-  m_FogColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  m_Fog: 1
+  m_FogColor: {r: 0.43137255, g: 0.7372549, b: 0.83137256, a: 1}
   m_FogMode: 3
-  m_FogDensity: 0.01
+  m_FogDensity: 0.06
   m_LinearFogStart: 0
   m_LinearFogEnd: 300
   m_AmbientSkyColor: {r: 0.212, g: 0.227, b: 0.259, a: 1}
@@ -515,18 +515,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
   walkSpeed: 8
   sprintSpeed: 15
-  slideSpeed: 15
   wallRunSpeed: 9
+  superSpeed: 40
   groundDrag: 2.5
   jumpForce: 12
   airMultiplier: 0.4
   sprintTime: 3
   sprintRegenPerSecond: 1.5
-  airGracePeriod: 1
-  maxSlideTime: 1
-  slideForce: 25
-  slideColliderHeight: 1
-  slideStickForce: 25
   whatIsWall:
     serializedVersion: 2
     m_Bits: 193
@@ -541,6 +536,10 @@ MonoBehaviour:
     m_Bits: 73
   playerHeight: 2
   maxSlopeAngle: 45
+  superSpeedKey: 306
+  superSpeedGrowthRate: 35
+  powerJumpForce: 20
+  powerJumpCooldown: 2
   playerCam: {fileID: 450316188}
 --- !u!1 &222083098
 GameObject:
