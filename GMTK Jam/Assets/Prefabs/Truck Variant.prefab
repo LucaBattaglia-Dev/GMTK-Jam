@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1456019481796229207}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: FR
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -40,7 +40,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5832123236960529685}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: FL
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -71,7 +71,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3929526475960551525}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: BR
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -102,7 +102,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6097469901505055701}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: BL
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -133,7 +133,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6611743667910988230}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Ray Points
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -171,7 +171,7 @@ GameObject:
   - component: {fileID: 7669807050079303524}
   - component: {fileID: 7660957365345531136}
   - component: {fileID: 7775209096120110566}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: SM_Veh_Truck_Wheel_rr_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -283,7 +283,7 @@ GameObject:
   - component: {fileID: 7670250103954850948}
   - component: {fileID: 7662490701441574892}
   - component: {fileID: 7701863606301711114}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: SM_Veh_Truck_Attachment_Delivery_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -397,7 +397,7 @@ GameObject:
   - component: {fileID: 7670558931404466002}
   - component: {fileID: 7661930704446276290}
   - component: {fileID: 7775205657112088236}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: SM_Veh_Truck_Wheel_fl
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -508,7 +508,7 @@ GameObject:
   - component: {fileID: 7644018688907466508}
   - component: {fileID: 7670381316550589018}
   - component: {fileID: 7661895633301857830}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: SM_Veh_Truck_Attachment_Garbage_Lid
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -599,7 +599,7 @@ GameObject:
   - component: {fileID: 7670745235821555122}
   - component: {fileID: 7660992071476800122}
   - component: {fileID: 7775038304474865102}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: SM_Veh_Truck_Wheel_rl_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -711,7 +711,7 @@ GameObject:
   - component: {fileID: 7670465261958574850}
   - component: {fileID: 7662399981823737912}
   - component: {fileID: 7774575329432005098}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: SM_Veh_Truck_Wheel_rr_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -823,7 +823,7 @@ GameObject:
   - component: {fileID: 7670431192468933394}
   - component: {fileID: 7662504008846567576}
   - component: {fileID: 7775192391498397170}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: SM_Veh_Truck_Wheel_fr
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -934,7 +934,7 @@ GameObject:
   - component: {fileID: 7641219832987259964}
   - component: {fileID: 7670486369444846574}
   - component: {fileID: 7661975509754443018}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: SM_Veh_Truck_Attachment_Flatbed_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1024,7 +1024,7 @@ GameObject:
   - component: {fileID: 7644083711604432742}
   - component: {fileID: 7673405839146506436}
   - component: {fileID: 7662691150510125246}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: SM_Veh_Truck_Attachment_Delivery_Door_R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1114,7 +1114,7 @@ GameObject:
   - component: {fileID: 7643863607442506424}
   - component: {fileID: 7673508641771547618}
   - component: {fileID: 7662624669330863944}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: SM_Veh_Truck_SteeringW
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1204,7 +1204,7 @@ GameObject:
   - component: {fileID: 7643870011478278886}
   - component: {fileID: 7670248794236054934}
   - component: {fileID: 7662427153732801622}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: SM_Veh_Truck_Attachment_Delivery_Door_L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1294,7 +1294,7 @@ GameObject:
   - component: {fileID: 7641111762067077998}
   - component: {fileID: 7673408026140555610}
   - component: {fileID: 7662859565635568276}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: SM_Veh_Truck_Glass
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1384,7 +1384,7 @@ GameObject:
   - component: {fileID: 7644150354584284772}
   - component: {fileID: 7673559680300391494}
   - component: {fileID: 7661180248658447304}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: SM_Veh_Truck_Attachment_Garbage_Pile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1475,7 +1475,7 @@ GameObject:
   - component: {fileID: 7670707856002783124}
   - component: {fileID: 7662333590435762476}
   - component: {fileID: 7775010868332692918}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: SM_Veh_Truck_Wheel_rl_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1586,7 +1586,7 @@ GameObject:
   - component: {fileID: 7641088685474257780}
   - component: {fileID: 7670471984518208674}
   - component: {fileID: 7662501739775545974}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: SM_Veh_Truck_Attachment_Garbage_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1860,31 +1860,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 681fc98daa25bd1419aec81688c76c83, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TruckDriver
-  minMoveSpeed: 5
-  maxMoveSpeed: 15
-  minTurnSpeed: 1.5
-  maxTurnSpeed: 3
-  minForwardDistance: 15
-  maxForwardDistance: 40
-  minRoadWidth: 1
-  maxRoadWidth: 2
-  minWaypointTolerance: 4
-  maxWaypointTolerance: 9
-  maxOvershotDistance: 2
-  roadLayer:
-    serializedVersion: 2
-    m_Bits: 200
-  buildingLayer:
-    serializedVersion: 2
-    m_Bits: 128
-  truckLayer:
-    serializedVersion: 2
-    m_Bits: 65
-  visionDistance: 5.25
-  visionWidth: 2.5
-  minBuildingImpactSpeed: 2
-  minTruckImpactSpeed: 2
   player: {fileID: 0}
-  activeRange: 60
-  despawnDistance: 90
-  showDebugLines: 1
+  moveSpeed: 0.1
+  driveForward: 1
+  despawnTiles: 35
+  tileSize: 5
