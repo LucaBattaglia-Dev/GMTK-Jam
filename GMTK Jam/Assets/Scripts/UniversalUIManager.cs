@@ -191,6 +191,7 @@ public class UniversalUIManager : MonoBehaviour
             masterVolumeSlider.onValueChanged.AddListener(SetMasterVolume);
             float savedVol = PlayerPrefs.GetFloat("MasterVolume", 1f);
             masterVolumeSlider.value = savedVol;
+            Debug.Log(savedVol);
             SetMasterVolume(savedVol);
         }
 
@@ -208,6 +209,9 @@ public class UniversalUIManager : MonoBehaviour
 
     public void SetMasterVolume(float value)
     {
+        //Kat's new code =========
+        BGMManager.Instance.ChangeBGMVolume(value);
+        
         if (audioMixer == null) return;
         float dB = value > 0 ? Mathf.Log10(value) * 20f : -80f;
         audioMixer.SetFloat(masterVolumeParameterName, dB);
