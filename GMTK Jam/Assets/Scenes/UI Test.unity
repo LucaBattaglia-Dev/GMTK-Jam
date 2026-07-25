@@ -901,6 +901,63 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1320670846}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &995073639
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 2693975906688806489, guid: a47184128d416514685246b1737cc99f, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -1.5316532
+      objectReference: {fileID: 0}
+    - target: {fileID: 2693975906688806489, guid: a47184128d416514685246b1737cc99f, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.23519497
+      objectReference: {fileID: 0}
+    - target: {fileID: 2693975906688806489, guid: a47184128d416514685246b1737cc99f, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -1.7183651
+      objectReference: {fileID: 0}
+    - target: {fileID: 2693975906688806489, guid: a47184128d416514685246b1737cc99f, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.02255356
+      objectReference: {fileID: 0}
+    - target: {fileID: 2693975906688806489, guid: a47184128d416514685246b1737cc99f, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.19200197
+      objectReference: {fileID: 0}
+    - target: {fileID: 2693975906688806489, guid: a47184128d416514685246b1737cc99f, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.9794356
+      objectReference: {fileID: 0}
+    - target: {fileID: 2693975906688806489, guid: a47184128d416514685246b1737cc99f, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.057727627
+      objectReference: {fileID: 0}
+    - target: {fileID: 2693975906688806489, guid: a47184128d416514685246b1737cc99f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: -6.993
+      objectReference: {fileID: 0}
+    - target: {fileID: 2693975906688806489, guid: a47184128d416514685246b1737cc99f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 178.729
+      objectReference: {fileID: 0}
+    - target: {fileID: 2693975906688806489, guid: a47184128d416514685246b1737cc99f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: -22.105
+      objectReference: {fileID: 0}
+    - target: {fileID: 6147677588578898689, guid: a47184128d416514685246b1737cc99f, type: 3}
+      propertyPath: m_Name
+      value: Extra Time Pickup
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: a47184128d416514685246b1737cc99f, type: 3}
 --- !u!1 &1162647962
 GameObject:
   m_ObjectHideFlags: 0
@@ -1531,6 +1588,10 @@ PrefabInstance:
       propertyPath: player
       value: 
       objectReference: {fileID: 873496002}
+    - target: {fileID: 1437915416925471568, guid: 35c58092f9b865a4391ea5fa33f5167d, type: 3}
+      propertyPath: startingTime
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 2556408497309462694, guid: 35c58092f9b865a4391ea5fa33f5167d, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -1777,3 +1838,4 @@ SceneRoots:
   - {fileID: 1320670846}
   - {fileID: 531499521}
   - {fileID: 1910302786}
+  - {fileID: 995073639}

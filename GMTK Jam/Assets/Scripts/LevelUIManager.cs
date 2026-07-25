@@ -1,5 +1,6 @@
 using UnityEngine;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 //Also keeps track of the player's scoare
 public class LevelUIManager : MonoBehaviour
@@ -8,8 +9,14 @@ public class LevelUIManager : MonoBehaviour
     [SerializeField] private GameObject powerupDurationPrefab;
     [SerializeField] private SprintDisplay sprintBar; 
     [SerializeField] private Transform distanceTextParent; 
+    [Header("From the game over screen")]
+    [SerializeField] private GameObject gameOverScreen; 
+    [SerializeField] private TMP_Text totalTimeText;
+    [SerializeField] private Transform totalDistanceParent;
     private TMP_Text[] distanceTextArray = new TMP_Text[5];
+    private TMP_Text[] gameOverTextArray = new TMP_Text[5];
     private float distance;
+    private PlayerCam playerCamScript; 
     public float Distance {get{return distance;} set{distance = value;}}
     private Transform playerTracker; 
     private Transform player; 
@@ -37,8 +44,12 @@ public class LevelUIManager : MonoBehaviour
     }
 
     void Start(){
+        playerCamScript = Camera.main.gameObject.GetComponent<PlayerCam>();
         for(int i = 0; i < distanceTextArray.Length; i++){
             distanceTextArray[i] = distanceTextParent.GetChild(i).GetChild(0).gameObject.GetComponent<TMP_Text>();
+        }
+        for(int i = 0; i < gameOverTextArray.Length; i++){
+            gameOverTextArray[i] = totalDistanceParent.GetChild(i).GetChild(0).gameObject.GetComponent<TMP_Text>();
         }
 
 
@@ -54,23 +65,34 @@ public class LevelUIManager : MonoBehaviour
         newObject.GetComponent<PickupCooldown>().Setup(pickup); 
     }
 
-    public void UpdateDistanceUI(){
+    public void UpdateDistanceUI(Transform uiParent, TMP_Text[] textArray){
         string temp = (int)distance + "";
         char[] scoreCharacter = temp.ToCharArray();
 
         for(int i = 0; i < scoreCharacter.Length; i++){
-            distanceTextParent.GetChild(i).gameObject.SetActive(true);
-            distanceTextArray[i].text = (scoreCharacter[i] + "");
+            uiParent.GetChild(i).gameObject.SetActive(true);
+            textArray[i].text = (scoreCharacter[i] + "");
         }
-
     }
 
     void FixedUpdate(){
         //Get Z difference from player tracker and player
         distance = player.position.z - playerTracker.position.z;
-        UpdateDistanceUI(); 
+        UpdateDistanceUI(distanceTextParent, distanceTextArray); 
+    }
 
+    //Show game over screen with total time and distance text
+    public void GameOver(){
+        totalTimeText.text = TimeManager.Instance.TotalTime.ToString("F2");
+        UpdateDistanceUI(totalDistanceParent, gameOverTextArray);
+        gameOverScreen.SetActive(true); 
+        Time.timeScale = 0.001f;
+        playerCamScript.UnlockCursor();
+    }
 
+    public void OnRetry(){
+        BGMManager.Instance.ChangeToLevelMusic();
+        SceneManager.LoadScene("Level1");
     }
 
     #endregion
