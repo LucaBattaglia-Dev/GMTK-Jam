@@ -1,7 +1,6 @@
 using DG.Tweening;
 using UnityEngine;
 
-//TODO: finish code to turn off renderer
 //Parent class for pickups, also handles animating them
 public class Pickup : MonoBehaviour
 {
@@ -32,8 +31,8 @@ public class Pickup : MonoBehaviour
         floatSequence.SetLoops(-1, LoopType.Yoyo);
     }
 
-    //For when you get a pickup that you already have. Resets the timer and color
-    public void RestartTimer(){
+    // Made virtual so child classes (like TimeWarp) can perform additional actions on timer reset
+    public virtual void RestartTimer(){
         currentDuration = powerupDuration;
         if(cooldownUI){
             cooldownUI.ResetColor(); 
