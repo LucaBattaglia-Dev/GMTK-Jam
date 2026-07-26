@@ -155,11 +155,12 @@ public class LevelUIManager : MonoBehaviour
     }
 
     public void GainStaminaUI(){
+        staminaText.gameObject.SetActive(true);
         staminaText.localPosition = Vector3.zero; 
-        staminaTextComponent.color = new Color(staminaTextComponent.color.r, staminaTextComponent.color.b, staminaTextComponent.color.g, 1);
+        staminaTextComponent.color = positiveTimeColor;
         
-        staminaText.DOMoveY(transform.position.y + 25, 0.9f);
-        //staminaText.gameObject.GetComponent<TMP_Text>.DOColor
+        staminaText.DOMoveY(staminaText.position.y + 25, 1f);
+        staminaTextComponent.DOColor(new Color(staminaTextComponent.color.r, staminaTextComponent.color.b, staminaTextComponent.color.g, 0), 1f); 
     }
 
     #endregion
