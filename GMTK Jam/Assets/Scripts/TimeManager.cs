@@ -128,8 +128,6 @@ public class TimeManager : MonoBehaviour
     public void AddTime(float time){
         currentTime += time; 
         UpdateTime();
-
-        
         LevelUIManager.Instance.AddTimeUI(time, (time >= 0));
     }
 
