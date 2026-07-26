@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class SFXManager : MonoBehaviour
 {
@@ -35,23 +36,6 @@ public class SFXManager : MonoBehaviour
         }
         DontDestroyOnLoad(this.gameObject);
     }
-
-    void Start(){
-        superSpeedSource = Instantiate(tempAudioSource, transform.position, Quaternion.identity); 
-        superSpeedSource.Pause();
-        superSpeedSource.loop = true; 
-        superSpeedSource.clip = superSpeedSFX; 
-        superSpeedSource.volume = 1 * sfxVolumeMultiplier; 
-    }
-
-    public void PlaySuperSpeed(){
-        superSpeedSource.Play();
-    }
-
-    public void StopSuperSpeed(){
-        superSpeedSource.Stop(); 
-    }
-
 
     public AudioSource PlaySFX(AudioClip clip, float volume, bool destroySource = true)
     {

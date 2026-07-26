@@ -1108,6 +1108,8 @@ MonoBehaviour:
   powerupDurationPrefab: {fileID: 5065272440423939610, guid: edeef911a1dd1cb40ba53911de59bb77, type: 3}
   sprintBar: {fileID: 725066266585919799}
   distanceTextParent: {fileID: 5115040873859225097}
+  poolSize: 10
+  poolParent: {fileID: 6136036261884104624}
   gameOverScreen: {fileID: 3647994770854176269}
   totalTimeText: {fileID: 2754463445202304424}
   totalDistanceParent: {fileID: 6122522681801535458}

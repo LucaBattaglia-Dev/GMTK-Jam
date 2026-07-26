@@ -85,6 +85,10 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 movingVelocity;
     private Collider lastGround;
 
+    [Header("Audio Source")]
+    [SerializeField] private AudioClip superSpeedSound; 
+    private AudioSource superSpeedSource; 
+
     // Time Warp Momentum Tracking
     private float lastGlobalSpeedMultiplier = 1f;
 
@@ -96,6 +100,9 @@ public class PlayerMovement : MonoBehaviour
         sprintTimer = sprintTime;
         currentSpeed = walkSpeed;
         lastGlobalSpeedMultiplier = TruckDriver.GlobalSpeedMultiplier;
+        superSpeedSource = SFXManager.Instance.PlaySFX(superSpeedSound, 1f, false);
+        superSpeedSource.Pause();
+        superSpeedSource.loop = true; 
     }
 
     private void Update()
@@ -256,7 +263,7 @@ public class PlayerMovement : MonoBehaviour
             if (isSuperSpeedActive && sprintTimer > 0f)
             {
                 if(state != MovementState.SuperSpeed){
-                    SFXManager.Instance.PlaySuperSpeed(); 
+                    superSpeedSource.Play();
                 }
                 state = MovementState.SuperSpeed;
             }
@@ -274,7 +281,7 @@ public class PlayerMovement : MonoBehaviour
             }
 
             if(state != MovementState.SuperSpeed){
-                SFXManager.Instance.StopSuperSpeed(); 
+                superSpeedSource.Pause(); 
             }
         }
     }
