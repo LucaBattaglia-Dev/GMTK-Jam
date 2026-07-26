@@ -46,7 +46,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4af246c0318a50344b08d88195e486bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TimeWarp
-  pickupSFX: {fileID: 8300000, guid: e63e31c80bb72424dab9d84a9c0e6930, type: 3}
+  pickupSFX: {fileID: 8300000, guid: 7215866b59633654385508bb92d39070, type: 3}
   SFXVolume: 1
   pickupIcon: {fileID: 21300000, guid: fc37e5725415d454eb594f667d6614a2, type: 3}
   powerupDuration: 5
