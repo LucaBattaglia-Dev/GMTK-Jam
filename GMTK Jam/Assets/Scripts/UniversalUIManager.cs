@@ -189,7 +189,7 @@ public class UniversalUIManager : MonoBehaviour
         {
             masterVolumeSlider.onValueChanged.RemoveAllListeners();
             masterVolumeSlider.onValueChanged.AddListener(SetMasterVolume);
-            float savedVol = PlayerPrefs.GetFloat("MasterVolume", 1f);
+            float savedVol = PlayerPrefs.GetFloat("MasterVolume", 0.5f);
             masterVolumeSlider.value = savedVol;
             Debug.Log(savedVol);
             SetMasterVolume(savedVol);
@@ -199,7 +199,7 @@ public class UniversalUIManager : MonoBehaviour
         {
             brightnessSlider.onValueChanged.RemoveAllListeners();
             brightnessSlider.onValueChanged.AddListener(SetBrightness);
-            float savedBrightness = PlayerPrefs.GetFloat("Brightness", 0f);
+            float savedBrightness = PlayerPrefs.GetFloat("Brightness", 0.5f);
             brightnessSlider.value = savedBrightness;
             SetBrightness(savedBrightness);
         }
