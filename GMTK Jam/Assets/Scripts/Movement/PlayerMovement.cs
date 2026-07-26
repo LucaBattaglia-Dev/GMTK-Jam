@@ -1,5 +1,6 @@
 using System.Runtime.CompilerServices;
 using UnityEngine;
+using UnityEngine.UI; 
 
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(CapsuleCollider))]
@@ -14,16 +15,17 @@ public class PlayerMovement : MonoBehaviour
     public float jumpForce = 12f;
     public float airMultiplier = 0.4f;
 
-    [Header("Sprinting")]
-    public float sprintTime = 3f;
-    public float sprintRegenPerSecond = 1.5f;
+    [Header("Sprinting & Stamina")]
+    public float sprintTime = 6.0f; 
+    public float sprintRegenPerSecond = 0.5625f; 
+    public float emptyStaminaRegenDelay = 0.5f;
+    
     private float sprintTimer;
+    private float regenDelayTimer; 
+    
     public float SprintTimer
     {
-        get
-        {
-            return sprintTimer;
-        }
+        get { return sprintTimer; }
     }
     private bool isSprinting = false;
 
@@ -45,14 +47,17 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Special Abilities")]
     public KeyCode superSpeedKey = KeyCode.LeftControl;
-    [Tooltip("Amount speed increases per second while sprinting in super speed mode")]
     public float superSpeedGrowthRate = 35f;
+    public float superSpeedDecayRate = 25f;
+    public float superSpeedDrainGrowthRate = 3.0f; 
+    
     private bool isSuperSpeedActive = false;
     private float currentSpeed;
-    public float powerJumpForce = 20f;
-    public float powerJumpCooldown = 2f;
-    private float powerJumpTimer;
-    private bool hasPowerJumped;
+    private float superSpeedDrainMultiplier = 1f;
+    private float superSpeedHoldTimer = 0f; 
+
+    public bool IsExhausted { get; private set; }
+    private float exhaustionTimer = 0f;
 
     [Header("References")]
     public PlayerCam playerCam;
@@ -64,8 +69,10 @@ public class PlayerMovement : MonoBehaviour
     private float verticalInput;
     private Vector3 moveDirection;
 
-    private MovementState state;
-    private enum MovementState { Walking, Sprinting, WallRunning, Air }
+    public enum MovementState { Walking, Sprinting, SuperSpeed, WallRunning, Air }
+    public MovementState state { get; private set; } 
+    
+    public bool IsSuperSpeeding => state == MovementState.SuperSpeed;
 
     private bool grounded;
     private RaycastHit groundHit;
@@ -82,11 +89,8 @@ public class PlayerMovement : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         col = GetComponent<CapsuleCollider>();
-
         rb.freezeRotation = true;
-
         sprintTimer = sprintTime;
-        hasPowerJumped = false;
         currentSpeed = walkSpeed;
     }
 
@@ -99,10 +103,8 @@ public class PlayerMovement : MonoBehaviour
             lastGround = groundHit.collider;
             movingTrans = groundHit.collider.transform;
             Vector3 displacement;
-            if (movingLastPos == Vector3.zero)
-                displacement = Vector3.zero;
-            else
-                displacement = movingTrans.position - movingLastPos;
+            if (movingLastPos == Vector3.zero) displacement = Vector3.zero;
+            else displacement = movingTrans.position - movingLastPos;
             movingVelocity = (movingTrans.position - movingLastPos) / Time.deltaTime;
             movingLastPos = movingTrans.position;
             transform.position += displacement;
@@ -114,38 +116,81 @@ public class PlayerMovement : MonoBehaviour
             lastGround = null;
         }
 
-        // Inputs and States
         GetInput();
         CheckForWall();
         StateHandler();
 
-        // Physics drag
         rb.linearDamping = grounded ? groundDrag : 0f;
 
-        // Sprint Timer
-        if (isSprinting)
+        // --- STAMINA LOGIC ---
+        bool holdingSprintOrSuperSpeed = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(superSpeedKey);
+
+        if (state == MovementState.Sprinting || state == MovementState.SuperSpeed)
         {
-            sprintTimer -= Time.deltaTime;
+            regenDelayTimer = emptyStaminaRegenDelay;
+
+            if (state == MovementState.SuperSpeed)
+            {
+                superSpeedHoldTimer += Time.deltaTime;
+                superSpeedDrainMultiplier = 1f + (superSpeedHoldTimer * superSpeedHoldTimer * superSpeedDrainGrowthRate);
+                
+                sprintTimer -= Time.deltaTime * superSpeedDrainMultiplier;
+            }
+            else
+            {
+                superSpeedHoldTimer = 0f;
+                superSpeedDrainMultiplier = 1f;
+                sprintTimer -= Time.deltaTime * 0.9f;
+            }
+
             if (sprintTimer <= 0f)
+            {
+                if (state == MovementState.SuperSpeed)
+                {
+                    IsExhausted = true;
+                    exhaustionTimer = 1.5f; // Lasts 1.5 seconds now
+                }
                 sprintTimer = 0f;
+            }
         }
         else
         {
-            sprintTimer += Time.deltaTime * sprintRegenPerSecond;
-            if (sprintTimer >= sprintTime)
-                sprintTimer = sprintTime;
-        }
+            superSpeedHoldTimer = 0f;
+            superSpeedDrainMultiplier = 1f;
 
-        // Special Ability Cooldowns
-        powerJumpTimer = powerJumpTimer > 0f ? powerJumpTimer -= Time.deltaTime : 0f;
+            if (holdingSprintOrSuperSpeed)
+            {
+                regenDelayTimer = emptyStaminaRegenDelay;
+            }
+            else if (regenDelayTimer > 0f)
+            {
+                regenDelayTimer -= Time.deltaTime;
+            }
+
+            if (regenDelayTimer <= 0f)
+            {
+                float currentRegenRate = sprintRegenPerSecond;
+
+                if (IsExhausted)
+                {
+                    currentRegenRate *= 0.25f; // 50% slower than the previous penalty rate
+                    exhaustionTimer -= Time.deltaTime;
+                    
+                    if (exhaustionTimer <= 0f) 
+                        IsExhausted = false;
+                }
+
+                sprintTimer += Time.deltaTime * currentRegenRate;
+                if (sprintTimer >= sprintTime)
+                    sprintTimer = sprintTime;
+            }
+        }
     }
 
     private void FixedUpdate()
     {
-        if (state == MovementState.WallRunning)
-            WallRunMovement();
-        else
-            MovePlayer();
+        if (state == MovementState.WallRunning) WallRunMovement();
+        else MovePlayer();
     }
 
     private void GetInput()
@@ -153,57 +198,44 @@ public class PlayerMovement : MonoBehaviour
         horizontalInput = Input.GetAxisRaw("Horizontal");
         verticalInput = Input.GetAxisRaw("Vertical");
 
-        // Toggle Super Speed
-        if (Input.GetKeyDown(superSpeedKey))
-        {
-            isSuperSpeedActive = !isSuperSpeedActive;
-            if (!isSuperSpeedActive)
-            {
-                currentSpeed = sprintSpeed;
-            }
-        }
+        isSprinting = Input.GetKey(KeyCode.LeftShift);
+        isSuperSpeedActive = Input.GetKey(superSpeedKey);
 
-        // Jump or Power Jump
         if (Input.GetButtonDown("Jump") && grounded)
         {
-            if (Input.GetKey(KeyCode.LeftControl) && powerJumpTimer <= 0f)
-            {
-                PowerJump();
-            }
-            else Jump();
+            Jump();
         }
-
-        // Sprint
-        isSprinting = Input.GetKey(KeyCode.LeftShift) && grounded;
     }
 
     private void StateHandler()
     {
-        // 1. Wall Running
         if ((wallLeft || wallRight) && verticalInput > 0 && !grounded)
         {
-            if (state != MovementState.WallRunning)
-                StartWallRun();
-
+            if (state != MovementState.WallRunning) StartWallRun();
             wallRunTimer -= Time.deltaTime;
-            if (wallRunTimer <= 0)
-                StopWallRun();
-
-            if (Input.GetButtonDown("Jump"))
-                WallJump();
+            if (wallRunTimer <= 0) StopWallRun();
+            if (Input.GetButtonDown("Jump")) WallJump();
         }
-        // 2. Grounded
-        else if (grounded)
-        {
-            if (state == MovementState.WallRunning) StopWallRun();
-
-            state = isSprinting && sprintTimer != 0f ? MovementState.Sprinting : MovementState.Walking;
-        }
-        // 3. In Air
         else
         {
             if (state == MovementState.WallRunning) StopWallRun();
-            state = MovementState.Air;
+
+            if (isSuperSpeedActive && sprintTimer > 0f)
+            {
+                state = MovementState.SuperSpeed;
+            }
+            else if (isSprinting && sprintTimer > 0f)
+            {
+                state = MovementState.Sprinting;
+            }
+            else if (grounded)
+            {
+                state = MovementState.Walking;
+            }
+            else
+            {
+                state = MovementState.Air;
+            }
         }
     }
 
@@ -211,23 +243,19 @@ public class PlayerMovement : MonoBehaviour
     {
         moveDirection = transform.forward * verticalInput + transform.right * horizontalInput;
 
-        // Speed calculation with Super Speed acceleration logic. Cap at max super speed
-        if (state == MovementState.Sprinting)
+        if (state == MovementState.SuperSpeed)
         {
-            if (isSuperSpeedActive)
-            {
-                currentSpeed += superSpeedGrowthRate * Time.deltaTime;
-                if (currentSpeed > superSpeed) currentSpeed = superSpeed;
-            }
-            else
-            {
-                currentSpeed = sprintSpeed;
-            }
+            currentSpeed += superSpeedGrowthRate * Time.deltaTime;
+            if (currentSpeed > superSpeed) currentSpeed = superSpeed;
         }
-        else if (grounded)
+        else 
         {
-            currentSpeed = walkSpeed;
-            isSuperSpeedActive = false; // Turn off super speed if you drop out of sprinting
+            float targetSpeed = (state == MovementState.Sprinting) ? sprintSpeed : walkSpeed;
+
+            if (currentSpeed > targetSpeed)
+                currentSpeed = Mathf.MoveTowards(currentSpeed, targetSpeed, superSpeedDecayRate * Time.deltaTime);
+            else
+                currentSpeed = targetSpeed;
         }
 
         float speed = currentSpeed;
@@ -236,9 +264,7 @@ public class PlayerMovement : MonoBehaviour
         {
             Vector3 slopeDir = GetSlopeMoveDirection(moveDirection);
             rb.AddForce(slopeDir * speed * 10f, ForceMode.Force);
-
-            if (rb.linearVelocity.y > 0)
-                rb.AddForce(Vector3.down * 10f, ForceMode.Force);
+            if (rb.linearVelocity.y > 0) rb.AddForce(Vector3.down * 10f, ForceMode.Force);
         }
         else if (grounded)
         {
@@ -249,7 +275,6 @@ public class PlayerMovement : MonoBehaviour
             rb.AddForce(moveDirection.normalized * speed * 10f * airMultiplier, ForceMode.Force);
         }
 
-        // Speed Limit
         Vector3 flatVel = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
         if (flatVel.magnitude > speed)
         {
@@ -265,12 +290,10 @@ public class PlayerMovement : MonoBehaviour
         {
             Vector3 totalVelocity = rb.linearVelocity + movingVelocity;
             rb.linearVelocity = totalVelocity;
-            Debug.Log(totalVelocity);
         }
         rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
     }
 
-    // --- SLOPE DETECTION ---
     public bool OnSlope()
     {
         if (Physics.Raycast(transform.position, Vector3.down, out slopeHit, playerHeight * 0.5f + 0.5f, whatIsGround))
@@ -286,7 +309,6 @@ public class PlayerMovement : MonoBehaviour
         return Vector3.ProjectOnPlane(direction, slopeHit.normal).normalized;
     }
 
-    // --- WALL RUNNING ---
     private void CheckForWall()
     {
         wallRight = Physics.Raycast(transform.position, transform.right, out rightWallHit, wallCheckDistance, whatIsWall);
@@ -298,19 +320,14 @@ public class PlayerMovement : MonoBehaviour
         state = MovementState.WallRunning;
         wallRunTimer = maxWallRunTime;
         rb.useGravity = false;
-
-        if (playerCam != null)
-            playerCam.SetTilt(wallLeft ? -wallTiltAngle : wallTiltAngle);
+        if (playerCam != null) playerCam.SetTilt(wallLeft ? -wallTiltAngle : wallTiltAngle);
     }
 
     private void WallRunMovement()
     {
         Vector3 wallNormal = wallRight ? rightWallHit.normal : leftWallHit.normal;
         Vector3 wallForward = Vector3.Cross(wallNormal, transform.up);
-
-        if ((transform.forward - wallForward).magnitude > (transform.forward - -wallForward).magnitude)
-            wallForward = -wallForward;
-
+        if ((transform.forward - wallForward).magnitude > (transform.forward - -wallForward).magnitude) wallForward = -wallForward;
         rb.AddForce(wallForward * wallRunSpeedForce, ForceMode.Force);
         rb.AddForce(-wallNormal * 100f, ForceMode.Force);
     }
@@ -318,8 +335,7 @@ public class PlayerMovement : MonoBehaviour
     private void StopWallRun()
     {
         rb.useGravity = true;
-        if (playerCam != null)
-            playerCam.SetTilt(0f);
+        if (playerCam != null) playerCam.SetTilt(0f);
     }
 
     private void WallJump()
@@ -327,14 +343,7 @@ public class PlayerMovement : MonoBehaviour
         StopWallRun();
         Vector3 wallNormal = wallRight ? rightWallHit.normal : leftWallHit.normal;
         Vector3 forceToApply = transform.up * wallJumpUpForce + wallNormal * wallJumpSideForce;
-
         rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
         rb.AddForce(forceToApply, ForceMode.Impulse);
-    }
-
-    private void PowerJump()
-    {
-        rb.AddForce(transform.up * powerJumpForce, ForceMode.Impulse);
-        powerJumpTimer = powerJumpCooldown;
     }
 }
