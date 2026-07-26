@@ -11,6 +11,9 @@ public class StartingLine : MonoBehaviour
         {
             hasTriggered = true;
 
+            // Enable movement for all trucks (both scene pre-placed and future spawns)
+            TruckDriver.CanMove = true;
+
             // Tell the TimeManager singleton to start the countdown
             if (TimeManager.Instance != null)
             {

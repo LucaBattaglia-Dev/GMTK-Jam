@@ -6,6 +6,10 @@ public class TruckDriver : MonoBehaviour
     [Tooltip("Changes the speed of ALL trucks. Set this to 0.1f from your power-up script to slow time.")]
     public static float GlobalSpeedMultiplier = 1f;
 
+    [Header("Movement Control")]
+    [Tooltip("Global toggle: Set to true automatically when the player crosses the start line.")]
+    public static bool CanMove = false;
+
     [Header("References")]
     [Tooltip("Auto-assigned by the TrafficSpawner")]
     public Transform player;
@@ -42,6 +46,9 @@ public class TruckDriver : MonoBehaviour
 
     private void Update()
     {
+        // Do not move if the player hasn't crossed the start line yet
+        if (!CanMove) return;
+
         // 1. Calculate the active speed by applying the global multiplier
         float activeSpeed = baseMoveSpeed * GlobalSpeedMultiplier;
         float direction = driveForward ? 1f : -1f;

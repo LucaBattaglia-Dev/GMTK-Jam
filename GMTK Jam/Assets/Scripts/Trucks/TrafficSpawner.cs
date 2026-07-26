@@ -53,7 +53,8 @@ public class TrafficSpawner : MonoBehaviour
 
     private void Update()
     {
-        if (player == null || truckPrefab == null) return;
+        // Wait until the player crosses the start line before spawning traffic
+        if (!TruckDriver.CanMove || player == null || truckPrefab == null) return;
 
         timer += Time.deltaTime;
         if (timer >= spawnInterval)

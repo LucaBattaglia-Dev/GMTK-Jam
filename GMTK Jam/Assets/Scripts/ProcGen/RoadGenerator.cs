@@ -138,11 +138,12 @@ public class RoadGenerator : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        // Activate traffic spawning when player enters the trigger box collider
+        // Activate traffic spawning and truck movement when player enters the trigger box collider
         if (!isSpawnerActivated && other.CompareTag("Player"))
         {
             isSpawnerActivated = true;
-            Debug.Log("Player triggered traffic spawner!");
+            TruckDriver.CanMove = true; // Enables movement for all trucks
+            Debug.Log("Player crossed start line! Trucks and spawner activated.");
         }
     }
 
