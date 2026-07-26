@@ -2,6 +2,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.SceneManagement;
 using System.Collections.Generic;
+using DG.Tweening; 
 
 //Also keeps track of the player's scoare
 public class LevelUIManager : MonoBehaviour
@@ -10,10 +11,17 @@ public class LevelUIManager : MonoBehaviour
     [SerializeField] private GameObject powerupDurationPrefab;
     [SerializeField] private SprintDisplay sprintBar; 
     [SerializeField] private Transform distanceTextParent; 
+    [Header("Additional Time UI")]
+    private int poolSize;
+    [SerializeField] public Transform poolParent;  
+    [SerializeField] public Color positiveTimeColor; 
+    [SerializeField] public Color negativeTimeColor; 
+    private int poolCounter = 0;
     [Header("From the game over screen")]
     [SerializeField] private GameObject gameOverScreen; 
     [SerializeField] private TMP_Text totalTimeText;
     [SerializeField] private Transform totalDistanceParent;
+    [SerializeField] private GameObject animatedTextPrefab; 
     private TMP_Text[] distanceTextArray = new TMP_Text[5];
     private TMP_Text[] gameOverTextArray = new TMP_Text[5];
     private float distance;
@@ -21,6 +29,9 @@ public class LevelUIManager : MonoBehaviour
     public float Distance {get{return distance;} set{distance = value;}}
     private Transform playerTracker; 
     private Transform player; 
+    public Transform Player {get{return player;}}
+    private Transform staminaText; 
+    private TMP_Text staminaTextComponent; 
     private List<System.Type> currentPickups = new List<System.Type>(); 
     private List<Pickup> currentPickupScripts = new List<Pickup>();
 
@@ -47,6 +58,9 @@ public class LevelUIManager : MonoBehaviour
     }
 
     void Start(){
+        staminaText = transform.GetChild(0).GetChild(0);
+        staminaTextComponent = staminaText.GetComponent<TMP_Text>();  
+        poolSize = poolParent.childCount;
         playerCamScript = Camera.main.gameObject.GetComponent<PlayerCam>();
         for(int i = 0; i < distanceTextArray.Length; i++){
             distanceTextArray[i] = distanceTextParent.GetChild(i).GetChild(0).gameObject.GetComponent<TMP_Text>();
@@ -112,6 +126,40 @@ public class LevelUIManager : MonoBehaviour
     public void OnRetry(){
         BGMManager.Instance.ChangeToLevelMusic();
         SceneManager.LoadScene("Level1");
+    }
+
+    public void AddTimeUI(float value, bool isPositive){
+        if(poolCounter == poolSize){
+            poolCounter = 0; 
+        }
+        GameObject textObject = poolParent.GetChild(poolCounter).gameObject;
+        TMP_Text text = textObject.GetComponent<TMP_Text>(); 
+        poolParent.GetChild(poolCounter).gameObject.SetActive(true); 
+        textObject.SetActive(true); 
+
+        if(isPositive){
+            text.text = "+" + value + "";
+            text.color = positiveTimeColor;
+        }else{
+            text.text = "-" + value + "";
+            text.color = negativeTimeColor;
+        }
+
+        textObject.transform.DOMoveY(textObject.transform.position.y + 25, 0.9f);
+        text.DOColor(new Color(text.color.r, text.color.b, text.color.g, 0), 0.9f).OnComplete(() => {
+            textObject.SetActive(true);
+            textObject.transform.localPosition = Vector3.zero; 
+        });
+
+        poolCounter++;
+    }
+
+    public void GainStaminaUI(){
+        staminaText.localPosition = Vector3.zero; 
+        staminaTextComponent.color = new Color(staminaTextComponent.color.r, staminaTextComponent.color.b, staminaTextComponent.color.g, 1);
+        
+        staminaText.DOMoveY(transform.position.y + 25, 0.9f);
+        //staminaText.gameObject.GetComponent<TMP_Text>.DOColor
     }
 
     #endregion

@@ -1,7 +1,6 @@
 using DG.Tweening;
 using UnityEngine;
 
-//TODO: finish code to turn off renderer
 //Parent class for pickups, also handles animating them
 public class Pickup : MonoBehaviour
 {
@@ -23,6 +22,7 @@ public class Pickup : MonoBehaviour
 
     #region class methods
     void Start(){
+        Setup(); 
         currentDuration = powerupDuration;
         originalYPos = transform.position.y;
 
@@ -32,8 +32,8 @@ public class Pickup : MonoBehaviour
         floatSequence.SetLoops(-1, LoopType.Yoyo);
     }
 
-    //For when you get a pickup that you already have. Resets the timer and color
-    public void RestartTimer(){
+    // Made virtual so child classes (like TimeWarp) can perform additional actions on timer reset
+    public virtual void RestartTimer(){
         currentDuration = powerupDuration;
         if(cooldownUI){
             cooldownUI.ResetColor(); 
@@ -44,8 +44,8 @@ public class Pickup : MonoBehaviour
         PlaySFX();
         isActive = true;
         OnPickup();
-        this.gameObject.GetComponent<MeshRenderer>().enabled = false; 
-        this.gameObject.GetComponent<Collider>().enabled = false;
+        transform.GetChild(0).gameObject.GetComponent<MeshRenderer>().enabled = false; 
+        transform.gameObject.GetComponent<Collider>().enabled = false;
     }
 
     public void PlaySFX(){
@@ -58,6 +58,9 @@ public class Pickup : MonoBehaviour
             if(currentDuration <= 0){
                 OnDespawn();
                 LevelUIManager.Instance.RemovePickup(this);
+                if(cooldownUI){
+                    Destroy(cooldownUI.gameObject);
+                }
                 Destroy(this.gameObject);
             }
         }
@@ -65,6 +68,9 @@ public class Pickup : MonoBehaviour
     #endregion
 
     #region to override
+    public virtual void Setup(){ //for additional start() functionality
+    }
+
     public virtual void OnPickup(){
     }
 

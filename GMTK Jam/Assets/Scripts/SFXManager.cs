@@ -1,9 +1,14 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class SFXManager : MonoBehaviour
 {
     [SerializeField] public AudioSource tempAudioSource;
-    public float sfxVolumeMultiplier = 1;
+    private float sfxVolumeMultiplier = 1;
+    public float SFXVolumeMultiplier {get{return sfxVolumeMultiplier;} set{sfxVolumeMultiplier = value;}}
+    private AudioSource superSpeedSource; 
+    [Header("Specific Audio Sources")]
+    [SerializeField] private AudioClip superSpeedSFX; 
 
     private static SFXManager instance;
     public static SFXManager Instance
@@ -32,9 +37,11 @@ public class SFXManager : MonoBehaviour
         DontDestroyOnLoad(this.gameObject);
     }
 
-
-    public void PlaySFX(AudioClip clip, float volume)
+    public AudioSource PlaySFX(AudioClip clip, float volume, bool destroySource = true)
     {
+        if(clip == null){
+            return null;
+        }
         AudioSource source = Instantiate(tempAudioSource, transform.position, Quaternion.identity);
         source.clip = clip;
         source.volume = volume * sfxVolumeMultiplier;
@@ -42,7 +49,10 @@ public class SFXManager : MonoBehaviour
         source.Play();
 
         float length = source.clip.length;
-
-        Destroy(source.gameObject, length);
+        if(destroySource){
+            Destroy(source.gameObject, length);
+        }
+        return source; 
     }
+
 }
