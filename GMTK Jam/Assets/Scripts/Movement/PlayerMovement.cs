@@ -32,12 +32,24 @@ public class PlayerMovement : MonoBehaviour
     [Header("Wall Running")]
     public LayerMask whatIsWall;
     public float wallCheckDistance = 0.8f;
+    [Tooltip("Radius of the spherecast. Larger values help smooth out bumpy walls.")]
+    public float wallSphereCastRadius = 0.4f; 
     public float wallRunSpeedForce = 200f;
     public float wallJumpUpForce = 10f;
     public float wallJumpSideForce = 10f;
     public float maxWallRunTime = 2f;
     public float wallTiltAngle = 10f;
+    
+    [Header("Wall Run Cooldowns")]
+    public float standardWallCooldown = 1f; // Cooldown if player falls or time ends
+    public float jumpWallCooldown = 2f;     // Cooldown if player jumps off
+    
     private float wallRunTimer;
+    private float wallRunCooldownTimer;
+
+    // Moving Wall Tracking
+    private Transform movingWallTrans;
+    private Vector3 movingWallLastPos;
 
     [Header("Ground & Slopes")]
     public LayerMask whatIsGround;
@@ -100,9 +112,12 @@ public class PlayerMovement : MonoBehaviour
         sprintTimer = sprintTime;
         currentSpeed = walkSpeed;
         lastGlobalSpeedMultiplier = TruckDriver.GlobalSpeedMultiplier;
-        superSpeedSource = SFXManager.Instance.PlaySFX(superSpeedSound, 1f, false);
-        superSpeedSource.Pause();
-        superSpeedSource.loop = true; 
+        
+        if (SFXManager.Instance != null) {
+            superSpeedSource = SFXManager.Instance.PlaySFX(superSpeedSound, 1f, false);
+            superSpeedSource.Pause();
+            superSpeedSource.loop = true; 
+        }
     }
 
     private void Update()
@@ -124,7 +139,13 @@ public class PlayerMovement : MonoBehaviour
 
         float timeMultiplier = currentGlobalSpeed;
 
-        // Ground detection
+        // --- WALL RUN COOLDOWN ---
+        if (wallRunCooldownTimer > 0f)
+        {
+            wallRunCooldownTimer -= Time.deltaTime * timeMultiplier;
+        }
+
+        // Ground detection & Platform tracking
         grounded = Physics.Raycast(transform.position, Vector3.down, out groundHit, playerHeight * 0.5f + 0.3f, whatIsGround);
         if (groundHit.collider != null && (lastGround == null || groundHit.collider == lastGround))
         {
@@ -147,6 +168,30 @@ public class PlayerMovement : MonoBehaviour
         GetInput();
         CheckForWall();
         StateHandler();
+
+        // --- MOVING WALL TRACKING (e.g. Trucks) ---
+        if (state == MovementState.WallRunning)
+        {
+            Transform currentWall = wallRight ? rightWallHit.transform : (wallLeft ? leftWallHit.transform : null);
+            if (currentWall != null)
+            {
+                if (movingWallTrans != currentWall)
+                {
+                    movingWallTrans = currentWall;
+                    movingWallLastPos = movingWallTrans.position;
+                }
+                else
+                {
+                    Vector3 wallDisplacement = movingWallTrans.position - movingWallLastPos;
+                    transform.position += wallDisplacement;
+                    movingWallLastPos = movingWallTrans.position;
+                }
+            }
+        }
+        else
+        {
+            movingWallTrans = null;
+        }
 
         rb.linearDamping = grounded ? groundDrag : 0f;
 
@@ -222,7 +267,6 @@ public class PlayerMovement : MonoBehaviour
         {
             MovePlayer();
 
-            // Scale gravity to s^2 during Time Warp so the jump arc stretches symmetrically to the same height
             if (!grounded && TruckDriver.GlobalSpeedMultiplier < 1f)
             {
                 float s = TruckDriver.GlobalSpeedMultiplier;
@@ -252,17 +296,30 @@ public class PlayerMovement : MonoBehaviour
         if ((wallLeft || wallRight) && verticalInput > 0 && !grounded)
         {
             if (state != MovementState.WallRunning) StartWallRun();
+            
             wallRunTimer -= Time.deltaTime * timeMultiplier;
-            if (wallRunTimer <= 0) StopWallRun();
-            if (Input.GetButtonDown("Jump")) WallJump();
+            
+            if (Input.GetButtonDown("Jump")) 
+            {
+                WallJump(); 
+            }
+            else if (wallRunTimer <= 0) 
+            {
+                // Max time ended, standard 1s cooldown
+                StopWallRun(standardWallCooldown); 
+            }
         }
         else
         {
-            if (state == MovementState.WallRunning) StopWallRun();
+            // Player fell off, stopped giving input, or cooldown forced walls to false
+            if (state == MovementState.WallRunning) 
+            {
+                StopWallRun(standardWallCooldown);
+            }
 
             if (isSuperSpeedActive && sprintTimer > 0f)
             {
-                if(state != MovementState.SuperSpeed){
+                if(state != MovementState.SuperSpeed && superSpeedSource != null){
                     superSpeedSource.Play();
                 }
                 state = MovementState.SuperSpeed;
@@ -280,7 +337,7 @@ public class PlayerMovement : MonoBehaviour
                 state = MovementState.Air;
             }
 
-            if(state != MovementState.SuperSpeed){
+            if(state != MovementState.SuperSpeed && superSpeedSource != null){
                 superSpeedSource.Pause(); 
             }
         }
@@ -339,7 +396,6 @@ public class PlayerMovement : MonoBehaviour
             rb.linearVelocity = totalVelocity;
         }
         
-        // Scale jump force by time multiplier so the initial velocity matches the height target for slow-mo
         float timeMultiplier = TruckDriver.GlobalSpeedMultiplier;
         float jumpScale = (timeMultiplier < 1f) ? timeMultiplier : 1f;
 
@@ -363,8 +419,16 @@ public class PlayerMovement : MonoBehaviour
 
     private void CheckForWall()
     {
-        wallRight = Physics.Raycast(transform.position, transform.right, out rightWallHit, wallCheckDistance, whatIsWall);
-        wallLeft = Physics.Raycast(transform.position, -transform.right, out leftWallHit, wallCheckDistance, whatIsWall);
+        // If we are on cooldown, we completely disable the player's ability to stick to walls.
+        if (wallRunCooldownTimer > 0f)
+        {
+            wallRight = false;
+            wallLeft = false;
+            return;
+        }
+
+        wallRight = Physics.SphereCast(transform.position, wallSphereCastRadius, transform.right, out rightWallHit, wallCheckDistance, whatIsWall);
+        wallLeft = Physics.SphereCast(transform.position, wallSphereCastRadius, -transform.right, out leftWallHit, wallCheckDistance, whatIsWall);
     }
 
     private void StartWallRun()
@@ -383,18 +447,26 @@ public class PlayerMovement : MonoBehaviour
         
         float timeMultiplier = TruckDriver.GlobalSpeedMultiplier;
         rb.AddForce(wallForward * wallRunSpeedForce * timeMultiplier, ForceMode.Force);
-        rb.AddForce(-wallNormal * 100f, ForceMode.Force);
+        rb.AddForce(-wallNormal * 50f, ForceMode.Force); 
     }
 
-    private void StopWallRun()
+    private void StopWallRun(float cooldown)
     {
+        // Set the cooldown depending on how the wallrun ended
+        wallRunCooldownTimer = cooldown;
+        
         rb.useGravity = true;
         if (playerCam != null) playerCam.SetTilt(0f);
+        
+        // Push state to Air immediately so the else block in StateHandler doesn't overwrite our 2-sec jump cooldown
+        state = MovementState.Air; 
     }
 
     private void WallJump()
     {
-        StopWallRun();
+        // Player jumped off early: Apply 2 second penalty
+        StopWallRun(jumpWallCooldown);
+        
         Vector3 wallNormal = wallRight ? rightWallHit.normal : leftWallHit.normal;
         Vector3 forceToApply = transform.up * wallJumpUpForce + wallNormal * wallJumpSideForce;
         rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);

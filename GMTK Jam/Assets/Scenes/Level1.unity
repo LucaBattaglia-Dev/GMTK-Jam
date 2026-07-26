@@ -2227,6 +2227,30 @@ PrefabInstance:
       propertyPath: sprintSpeed
       value: 20
       objectReference: {fileID: 0}
+    - target: {fileID: 4827803504963706474, guid: f76e027fbec559e4491666ab3ef3d39d, type: 3}
+      propertyPath: superSpeedSound
+      value: 
+      objectReference: {fileID: 8300000, guid: 4e9efbc5ba1d10e4d934b3d2b936f07a, type: 3}
+    - target: {fileID: 4827803504963706474, guid: f76e027fbec559e4491666ab3ef3d39d, type: 3}
+      propertyPath: wallJumpUpForce
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 4827803504963706474, guid: f76e027fbec559e4491666ab3ef3d39d, type: 3}
+      propertyPath: jumpWallCooldown
+      value: 1.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 4827803504963706474, guid: f76e027fbec559e4491666ab3ef3d39d, type: 3}
+      propertyPath: wallCheckDistance
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4827803504963706474, guid: f76e027fbec559e4491666ab3ef3d39d, type: 3}
+      propertyPath: wallJumpSideForce
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 4827803504963706474, guid: f76e027fbec559e4491666ab3ef3d39d, type: 3}
+      propertyPath: standardWallCooldown
+      value: 0.75
+      objectReference: {fileID: 0}
     - target: {fileID: 7160616333067457313, guid: f76e027fbec559e4491666ab3ef3d39d, type: 3}
       propertyPath: m_LocalPosition.x
       value: -60
