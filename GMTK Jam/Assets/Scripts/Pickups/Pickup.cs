@@ -22,6 +22,7 @@ public class Pickup : MonoBehaviour
 
     #region class methods
     void Start(){
+        Setup(); 
         currentDuration = powerupDuration;
         originalYPos = transform.position.y;
 
@@ -67,6 +68,9 @@ public class Pickup : MonoBehaviour
     #endregion
 
     #region to override
+    public virtual void Setup(){ //for additional start() functionality
+    }
+
     public virtual void OnPickup(){
     }
 
