@@ -39,6 +39,9 @@ public class SFXManager : MonoBehaviour
 
     public AudioSource PlaySFX(AudioClip clip, float volume, bool destroySource = true)
     {
+        if(clip == null){
+            return null;
+        }
         AudioSource source = Instantiate(tempAudioSource, transform.position, Quaternion.identity);
         source.clip = clip;
         source.volume = volume * sfxVolumeMultiplier;

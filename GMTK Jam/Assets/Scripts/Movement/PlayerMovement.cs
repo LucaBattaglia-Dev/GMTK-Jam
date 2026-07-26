@@ -26,6 +26,7 @@ public class PlayerMovement : MonoBehaviour
     public float SprintTimer
     {
         get { return sprintTimer; }
+        set {sprintTimer = value;}
     }
     private bool isSprinting = false;
 

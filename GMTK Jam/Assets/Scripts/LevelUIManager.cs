@@ -141,7 +141,10 @@ public class LevelUIManager : MonoBehaviour
         }
 
         textObject.transform.DOMoveY(textObject.transform.position.y + 25, 0.9f);
-        text.DOColor(new Color(text.color.r, text.color.b, text.color.g, 0), 0.9f);
+        text.DOColor(new Color(text.color.r, text.color.b, text.color.g, 0), 0.9f).OnComplete(() => {
+            textObject.SetActive(true);
+            textObject.transform.localPosition = Vector3.zero; 
+        });
 
         poolCounter++;
     }
