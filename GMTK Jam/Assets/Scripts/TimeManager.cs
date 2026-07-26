@@ -12,6 +12,10 @@ public class TimeManager : MonoBehaviour
     public float TotalTime { get { return totalTime; } }
     private bool gameOver = false; 
     private bool isCountingDown = false;
+    [SerializeField] private AudioClip boomSound; 
+    [SerializeField] private float boomThreshold = 5.5f; 
+    private AudioSource boomSource; 
+    private bool boomSpawned = false; 
 
     [Header("Super Speed Timer Settings")]
     [SerializeField] private float superSpeedTimeMultiplier = 3f; 
@@ -82,6 +86,10 @@ public class TimeManager : MonoBehaviour
                 gameOver = true; 
                 EndLevel();
             } else {
+                if(currentTime <= boomThreshold && !boomSpawned){
+                    boomSpawned = true; 
+                    boomSource = SFXManager.Instance.PlaySFX(boomSound, 1f, false);
+                }
                 totalTime += Time.deltaTime;
                 UpdateTime(); 
             }
