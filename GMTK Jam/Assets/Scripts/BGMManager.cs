@@ -8,7 +8,7 @@ public class BGMManager : MonoBehaviour
     [SerializeField] private bool isLevel = false; 
     float baseMultiplier = 0.75f;
     private float bgmVolume;
-    public float BGMVolume {set {bgmVolume = value;source.volume = value;}}
+    public float BGMVolume {get{return bgmVolume;}set {bgmVolume = value;}}
     private AudioSource source;
     public AudioSource Source {get { return source; }}
 
@@ -80,5 +80,7 @@ public class BGMManager : MonoBehaviour
     public void ChangeBGMVolume(float value){
         bgmVolume = value;
         source.volume = bgmVolume * baseMultiplier;
+
+        SFXManager.Instance.SFXVolumeMultiplier = value;  
     }
 }

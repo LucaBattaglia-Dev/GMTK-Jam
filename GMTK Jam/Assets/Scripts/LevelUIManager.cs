@@ -10,6 +10,10 @@ public class LevelUIManager : MonoBehaviour
     [SerializeField] private GameObject powerupDurationPrefab;
     [SerializeField] private SprintDisplay sprintBar; 
     [SerializeField] private Transform distanceTextParent; 
+    [Header("Additional Time UI")]
+    [SerializeField] public int poolSize;
+    [SerializeField] public Transform poolParent;  
+    private int poolCounter = 0;
     [Header("From the game over screen")]
     [SerializeField] private GameObject gameOverScreen; 
     [SerializeField] private TMP_Text totalTimeText;
@@ -113,6 +117,14 @@ public class LevelUIManager : MonoBehaviour
     public void OnRetry(){
         BGMManager.Instance.ChangeToLevelMusic();
         SceneManager.LoadScene("Level1");
+    }
+
+    public void AddTimeUI(float value, bool isPositive){
+        if(poolCounter == poolSize){
+            poolCounter = 0; 
+        }
+        poolParent.GetChild(poolCounter).gameObject.SetActive(true); 
+        poolCounter++;
     }
 
     #endregion

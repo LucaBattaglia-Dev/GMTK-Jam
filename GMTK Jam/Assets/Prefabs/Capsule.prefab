@@ -185,7 +185,7 @@ MonoBehaviour:
   superSpeedDecayRate: 25
   superSpeedDrainGrowthRate: 3
   playerCam: {fileID: 0}
-  superSpeedSFX: {fileID: 8300000, guid: 4e9efbc5ba1d10e4d934b3d2b936f07a, type: 3}
+  superSpeedSound: {fileID: 8300000, guid: 66b6db40a99247e4f897227801eb1d6d, type: 3}
 --- !u!1 &4302315420934604443
 GameObject:
   m_ObjectHideFlags: 0

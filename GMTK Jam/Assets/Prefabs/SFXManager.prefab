@@ -45,5 +45,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SFXManager
   tempAudioSource: {fileID: 9130857675933471837, guid: dcfca2980c1edef46a342ceb796fd412, type: 3}
-  sfxVolumeMultiplier: 1
-  superSpeedSFX: {fileID: 8300000, guid: 4e9efbc5ba1d10e4d934b3d2b936f07a, type: 3}
+  superSpeedSFX: {fileID: 8300000, guid: 66b6db40a99247e4f897227801eb1d6d, type: 3}
