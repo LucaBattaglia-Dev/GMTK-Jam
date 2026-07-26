@@ -136,7 +136,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 98dfe6b1587d6234f95748a81a03d5ee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ExtraTime
-  pickupSFX: {fileID: 8300000, guid: e21a8f65e2d9d9e459ee60caf6e7311d, type: 3}
+  pickupSFX: {fileID: 8300000, guid: 2788fde65ee9dea409e34821d2ceaa35, type: 3}
   SFXVolume: 1
   pickupIcon: {fileID: 0}
   powerupDuration: 0
