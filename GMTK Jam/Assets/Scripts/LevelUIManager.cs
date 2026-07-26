@@ -2,6 +2,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.SceneManagement;
 using System.Collections.Generic;
+using DG.Tweening; 
 
 //Also keeps track of the player's scoare
 public class LevelUIManager : MonoBehaviour
@@ -11,8 +12,10 @@ public class LevelUIManager : MonoBehaviour
     [SerializeField] private SprintDisplay sprintBar; 
     [SerializeField] private Transform distanceTextParent; 
     [Header("Additional Time UI")]
-    [SerializeField] public int poolSize;
+    private int poolSize;
     [SerializeField] public Transform poolParent;  
+    [SerializeField] public Color positiveTimeColor; 
+    [SerializeField] public Color negativeTimeColor; 
     private int poolCounter = 0;
     [Header("From the game over screen")]
     [SerializeField] private GameObject gameOverScreen; 
@@ -52,6 +55,7 @@ public class LevelUIManager : MonoBehaviour
     }
 
     void Start(){
+        poolSize = poolParent.childCount;
         playerCamScript = Camera.main.gameObject.GetComponent<PlayerCam>();
         for(int i = 0; i < distanceTextArray.Length; i++){
             distanceTextArray[i] = distanceTextParent.GetChild(i).GetChild(0).gameObject.GetComponent<TMP_Text>();
@@ -123,7 +127,22 @@ public class LevelUIManager : MonoBehaviour
         if(poolCounter == poolSize){
             poolCounter = 0; 
         }
+        GameObject textObject = poolParent.GetChild(poolCounter).gameObject;
+        TMP_Text text = textObject.GetComponent<TMP_Text>(); 
         poolParent.GetChild(poolCounter).gameObject.SetActive(true); 
+        textObject.SetActive(true); 
+
+        if(isPositive){
+            text.text = "+" + value + "";
+            text.color = positiveTimeColor;
+        }else{
+            text.text = "-" + value + "";
+            text.color = negativeTimeColor;
+        }
+
+        textObject.transform.DOMoveY(textObject.transform.position.y + 25, 0.9f);
+        text.DOColor(new Color(text.color.r, text.color.b, text.color.g, 0), 0.9f);
+
         poolCounter++;
     }
 
