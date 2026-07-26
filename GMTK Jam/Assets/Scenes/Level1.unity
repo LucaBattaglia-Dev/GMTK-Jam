@@ -1535,6 +1535,10 @@ PrefabInstance:
       propertyPath: 'm_ActiveFontFeatures.Array.data[0]'
       value: 1801810542
       objectReference: {fileID: 0}
+    - target: {fileID: 1242204720493717266, guid: 6009bdcd69ffbf44f8c492a45ce655c8, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -24.999939
+      objectReference: {fileID: 0}
     - target: {fileID: 3741194147007564781, guid: 6009bdcd69ffbf44f8c492a45ce655c8, type: 3}
       propertyPath: m_Name
       value: OptionsMenuPanel
@@ -1811,6 +1815,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 742719239}
     m_Modifications:
+    - target: {fileID: 1322988173073244501, guid: dd1bc61ce9e36714a82cab0734ff1a05, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -24.999939
+      objectReference: {fileID: 0}
     - target: {fileID: 1360167601416789977, guid: dd1bc61ce9e36714a82cab0734ff1a05, type: 3}
       propertyPath: 'm_ActiveFontFeatures.Array.data[0]'
       value: 1801810542
@@ -1930,8 +1938,8 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 1041960246}
-  - {fileID: 914288902}
   - {fileID: 742719239}
+  - {fileID: 914288902}
   - {fileID: 1963800007}
   - {fileID: 1210910745}
   - {fileID: 450316186}

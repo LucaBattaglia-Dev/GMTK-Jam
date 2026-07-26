@@ -44,8 +44,8 @@ public class Pickup : MonoBehaviour
         PlaySFX();
         isActive = true;
         OnPickup();
-        this.gameObject.GetComponent<MeshRenderer>().enabled = false; 
-        this.gameObject.GetComponent<Collider>().enabled = false;
+        transform.GetChild(0).gameObject.GetComponent<MeshRenderer>().enabled = false; 
+        transform.gameObject.GetComponent<Collider>().enabled = false;
     }
 
     public void PlaySFX(){
@@ -58,6 +58,9 @@ public class Pickup : MonoBehaviour
             if(currentDuration <= 0){
                 OnDespawn();
                 LevelUIManager.Instance.RemovePickup(this);
+                if(cooldownUI){
+                    Destroy(cooldownUI.gameObject);
+                }
                 Destroy(this.gameObject);
             }
         }
