@@ -4,6 +4,10 @@ public class SFXManager : MonoBehaviour
 {
     [SerializeField] public AudioSource tempAudioSource;
     public float sfxVolumeMultiplier = 1;
+    private AudioSource superSpeedSource; 
+
+    [Header("Specific Audio Sources")]
+    [SerializeField] private AudioClip superSpeedSFX; 
 
     private static SFXManager instance;
     public static SFXManager Instance
@@ -30,6 +34,22 @@ public class SFXManager : MonoBehaviour
             this.transform.parent = null;
         }
         DontDestroyOnLoad(this.gameObject);
+    }
+
+    void Start(){
+        superSpeedSource = Instantiate(tempAudioSource, transform.position, Quaternion.identity); 
+        superSpeedSource.Pause();
+        superSpeedSource.loop = true; 
+        superSpeedSource.clip = superSpeedSFX; 
+        superSpeedSource.volume = 1 * sfxVolumeMultiplier; 
+    }
+
+    public void PlaySuperSpeed(){
+        superSpeedSource.Play();
+    }
+
+    public void StopSuperSpeed(){
+        superSpeedSource.Stop(); 
     }
 
 

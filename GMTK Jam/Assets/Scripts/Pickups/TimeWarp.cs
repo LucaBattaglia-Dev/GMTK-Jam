@@ -19,6 +19,6 @@ public class TimeWarp : Pickup
         TruckDriver.GlobalSpeedMultiplier = 1f;
 
         //Turn off black and white overlay
-        LevelUIManager.Instance.Player.GetChild(0).gameObject.SetActive(true);
+        LevelUIManager.Instance.Player.GetChild(0).gameObject.SetActive(false);
     }
 }

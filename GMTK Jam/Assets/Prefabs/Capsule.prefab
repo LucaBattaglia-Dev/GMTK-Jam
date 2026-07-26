@@ -165,6 +165,7 @@ MonoBehaviour:
   airMultiplier: 0.5
   sprintTime: 2
   sprintRegenPerSecond: 1.5
+  emptyStaminaRegenDelay: 0.5
   whatIsWall:
     serializedVersion: 2
     m_Bits: 193
@@ -181,9 +182,10 @@ MonoBehaviour:
   maxSlopeAngle: 45
   superSpeedKey: 306
   superSpeedGrowthRate: 35
-  powerJumpForce: 20
-  powerJumpCooldown: 2
+  superSpeedDecayRate: 25
+  superSpeedDrainGrowthRate: 3
   playerCam: {fileID: 0}
+  superSpeedSFX: {fileID: 8300000, guid: 4e9efbc5ba1d10e4d934b3d2b936f07a, type: 3}
 --- !u!1 &4302315420934604443
 GameObject:
   m_ObjectHideFlags: 0

@@ -251,6 +251,9 @@ MonoBehaviour:
   startingTime: 60
   lowTimeThreshold: 20
   lowTimeColor: {r: 0.8773585, g: 0.24417053, b: 0.24417053, a: 1}
+  superSpeedTimeMultiplier: 3
+  superSpeedColor: {r: 1, g: 0, b: 0, a: 1}
+  maroonColor: {r: 0.5, g: 0, b: 0, a: 1}
   timeText: {fileID: 2411944136824761512}
 --- !u!1 &1074550515863098286
 GameObject:
@@ -1918,6 +1921,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SprintDisplayer
   player: {fileID: 0}
+  normalColor: {r: 1, g: 1, b: 1, a: 1}
+  superSpeedColor: {r: 1, g: 0, b: 0, a: 1}
+  exhaustedColor: {r: 1, g: 0.5, b: 0, a: 1}
 --- !u!1 &6490171298878266351
 GameObject:
   m_ObjectHideFlags: 0

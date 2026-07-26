@@ -222,6 +222,9 @@ public class PlayerMovement : MonoBehaviour
 
             if (isSuperSpeedActive && sprintTimer > 0f)
             {
+                if(state != MovementState.SuperSpeed){
+                    SFXManager.Instance.PlaySuperSpeed(); 
+                }
                 state = MovementState.SuperSpeed;
             }
             else if (isSprinting && sprintTimer > 0f)
@@ -235,6 +238,10 @@ public class PlayerMovement : MonoBehaviour
             else
             {
                 state = MovementState.Air;
+            }
+
+            if(state != MovementState.SuperSpeed){
+                SFXManager.Instance.StopSuperSpeed(); 
             }
         }
     }
