@@ -21,6 +21,7 @@ public class LevelUIManager : MonoBehaviour
     [SerializeField] private GameObject gameOverScreen; 
     [SerializeField] private TMP_Text totalTimeText;
     [SerializeField] private Transform totalDistanceParent;
+    [SerializeField] private GameObject animatedTextPrefab; 
     private TMP_Text[] distanceTextArray = new TMP_Text[5];
     private TMP_Text[] gameOverTextArray = new TMP_Text[5];
     private float distance;
@@ -29,6 +30,8 @@ public class LevelUIManager : MonoBehaviour
     private Transform playerTracker; 
     private Transform player; 
     public Transform Player {get{return player;}}
+    private Transform staminaText; 
+    private TMP_Text staminaTextComponent; 
     private List<System.Type> currentPickups = new List<System.Type>(); 
     private List<Pickup> currentPickupScripts = new List<Pickup>();
 
@@ -55,6 +58,8 @@ public class LevelUIManager : MonoBehaviour
     }
 
     void Start(){
+        staminaText = transform.GetChild(0).GetChild(0);
+        staminaTextComponent = staminaText.GetComponent<TMP_Text>();  
         poolSize = poolParent.childCount;
         playerCamScript = Camera.main.gameObject.GetComponent<PlayerCam>();
         for(int i = 0; i < distanceTextArray.Length; i++){
@@ -141,9 +146,20 @@ public class LevelUIManager : MonoBehaviour
         }
 
         textObject.transform.DOMoveY(textObject.transform.position.y + 25, 0.9f);
-        text.DOColor(new Color(text.color.r, text.color.b, text.color.g, 0), 0.9f);
+        text.DOColor(new Color(text.color.r, text.color.b, text.color.g, 0), 0.9f).OnComplete(() => {
+            textObject.SetActive(true);
+            textObject.transform.localPosition = Vector3.zero; 
+        });
 
         poolCounter++;
+    }
+
+    public void GainStaminaUI(){
+        staminaText.localPosition = Vector3.zero; 
+        staminaTextComponent.color = new Color(staminaTextComponent.color.r, staminaTextComponent.color.b, staminaTextComponent.color.g, 1);
+        
+        staminaText.DOMoveY(transform.position.y + 25, 0.9f);
+        //staminaText.gameObject.GetComponent<TMP_Text>.DOColor
     }
 
     #endregion

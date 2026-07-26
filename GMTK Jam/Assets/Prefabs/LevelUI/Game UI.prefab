@@ -321,6 +321,11 @@ MonoBehaviour:
   startingTime: 60
   lowTimeThreshold: 55
   lowTimeColor: {r: 0.8773585, g: 0.24417053, b: 0.24417053, a: 1}
+  boomSound: {fileID: 0}
+  boomThreshold: 5.5
+  superSpeedTimeMultiplier: 3
+  superSpeedColor: {r: 1, g: 0, b: 0, a: 1}
+  maroonColor: {r: 0.5, g: 0, b: 0, a: 1}
   timeText: {fileID: 5742716716316584343}
 --- !u!1 &3269601148015915339
 GameObject:
@@ -510,7 +515,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelUIManager
   powerupCooldownParent: {fileID: 8307880870594141824}
   powerupDurationPrefab: {fileID: 5065272440423939610, guid: edeef911a1dd1cb40ba53911de59bb77, type: 3}
+  sprintBar: {fileID: 0}
   distanceTextParent: {fileID: 3663604522077288823}
+  poolParent: {fileID: 0}
+  positiveTimeColor: {r: 0, g: 0, b: 0, a: 0}
+  negativeTimeColor: {r: 0, g: 0, b: 0, a: 0}
+  gameOverScreen: {fileID: 0}
+  totalTimeText: {fileID: 0}
+  totalDistanceParent: {fileID: 0}
 --- !u!1 &7701828062529852039
 GameObject:
   m_ObjectHideFlags: 0
@@ -933,7 +945,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3679032520196039841, guid: 375edbd07e0207b449168a787ff03897, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 525.4
+      value: 486.84998
       objectReference: {fileID: 0}
     - target: {fileID: 3679032520196039841, guid: 375edbd07e0207b449168a787ff03897, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -1039,7 +1051,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3679032520196039841, guid: 375edbd07e0207b449168a787ff03897, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 409.75003
+      value: 525.4
       objectReference: {fileID: 0}
     - target: {fileID: 3679032520196039841, guid: 375edbd07e0207b449168a787ff03897, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -1145,7 +1157,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3679032520196039841, guid: 375edbd07e0207b449168a787ff03897, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 486.85
+      value: 448.3
       objectReference: {fileID: 0}
     - target: {fileID: 3679032520196039841, guid: 375edbd07e0207b449168a787ff03897, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -1251,7 +1263,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3679032520196039841, guid: 375edbd07e0207b449168a787ff03897, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 448.30002
+      value: 409.75
       objectReference: {fileID: 0}
     - target: {fileID: 3679032520196039841, guid: 375edbd07e0207b449168a787ff03897, type: 3}
       propertyPath: m_AnchoredPosition.y

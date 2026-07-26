@@ -53,7 +53,6 @@ MonoBehaviour:
   powerupDuration: 5
   newTimeScale: 0.2
   timeWarpLoopSFX: {fileID: 8300000, guid: 3e3c0c1b036469949b8ef83a9c01b7a3, type: 3}
-  timeWarpVolume: 1
 --- !u!136 &1370572403290090864
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -73,7 +72,7 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.19
+  m_Radius: 0.28
   m_Height: 0.72
   m_Direction: 1
   m_Center: {x: 0.06, y: 0.18, z: 0.09}
