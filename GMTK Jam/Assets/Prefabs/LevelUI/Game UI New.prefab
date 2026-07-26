@@ -1457,7 +1457,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 5893828733862588315}
         m_TargetAssemblyTypeName: LevelUIManager, Assembly-CSharp
         m_MethodName: OnRetry
         m_Mode: 1

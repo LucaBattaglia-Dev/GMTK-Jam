@@ -1415,7 +1415,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1437915416925471568, guid: 35c58092f9b865a4391ea5fa33f5167d, type: 3}
       propertyPath: startingTime
-      value: 100
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 1437915416925471568, guid: 35c58092f9b865a4391ea5fa33f5167d, type: 3}
       propertyPath: maroonColor.b
@@ -2017,6 +2017,8 @@ MonoBehaviour:
   player: {fileID: 135714829}
   segmentsAhead: 35
   despawnDistanceSegments: 35
+  centerPrefab: {fileID: 0}
+  centerSpawnInterval: 10
   truckPrefab: {fileID: 7640037923345900238, guid: 5b0f4b28ee04ec742a887ad34d03d62d, type: 3}
   trafficSpawnInterval: 4
   minTrucksPerWave: 1
@@ -2929,7 +2931,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1242204720493717266, guid: 6009bdcd69ffbf44f8c492a45ce655c8, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -24.999939
+      value: -25
       objectReference: {fileID: 0}
     - target: {fileID: 3741194147007564781, guid: 6009bdcd69ffbf44f8c492a45ce655c8, type: 3}
       propertyPath: m_Name
@@ -3209,7 +3211,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1322988173073244501, guid: dd1bc61ce9e36714a82cab0734ff1a05, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -24.999939
+      value: -25
       objectReference: {fileID: 0}
     - target: {fileID: 1360167601416789977, guid: dd1bc61ce9e36714a82cab0734ff1a05, type: 3}
       propertyPath: 'm_ActiveFontFeatures.Array.data[0]'
