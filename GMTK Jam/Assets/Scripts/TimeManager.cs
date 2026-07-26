@@ -89,6 +89,7 @@ public class TimeManager : MonoBehaviour
                 if(currentTime <= boomThreshold && !boomSpawned){
                     boomSpawned = true; 
                     boomSource = SFXManager.Instance.PlaySFX(boomSound, 1f, false);
+                    boomSource.pitch = 2f; 
                 }
                 totalTime += Time.deltaTime;
                 UpdateTime(); 
