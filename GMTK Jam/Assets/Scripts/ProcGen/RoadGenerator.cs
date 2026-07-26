@@ -35,6 +35,12 @@ public class RoadGenerator : MonoBehaviour
     [Tooltip("Segments further behind than this number will be destroyed (> 12)")]
     [SerializeField] private int despawnDistanceSegments = 12;
 
+    [Header("Center Prefab Generation")]
+    [Tooltip("The prefab to spawn in the direct middle of the road (e.g. pickups, dividing barriers)")]
+    [SerializeField] private GameObject centerPrefab;
+    [Tooltip("How often to spawn the center prefab in meters (e.g. every 10 meters)")]
+    [SerializeField] private float centerSpawnInterval = 10.0f;
+
     [Header("Traffic Spawning Ranges & Settings")]
     [Tooltip("Drag your Truck Prefab here")]
     [SerializeField] private GameObject truckPrefab;
@@ -285,6 +291,21 @@ public class RoadGenerator : MonoBehaviour
         {
             float rightSidewalkX = rightCurbX + (curbTileWidth * 0.5f) + (sidewalkTileWidth * 0.5f) + (s * sidewalkTileWidth);
             SpawnTile(sidewalk, new Vector3(rightSidewalkX, rowOrigin.y, zPos), rowParent.transform);
+        }
+
+        // --- NEW: Spawn Center Prefab every 10 meters ---
+        if (centerPrefab != null && centerSpawnInterval > 0f)
+        {
+            // We use Mathf.Repeat to check if the current Z position is a clean multiple of the interval.
+            // Using a small margin (0.05f) handles floating point inaccuracies.
+            float remainder = Mathf.Repeat(zPos, centerSpawnInterval);
+            
+            if ((remainder < 0.05f || remainder > centerSpawnInterval - 0.05f) && zPos > 0f)
+            {
+                Vector3 centerPos = new Vector3(rowOrigin.x, rowOrigin.y, zPos);
+                // Childed to rowParent so it auto-destroys when the segment despawns
+                Instantiate(centerPrefab, centerPos, transform.rotation, rowParent.transform);
+            }
         }
 
         activeSegments.Add(zIndex, rowParent);

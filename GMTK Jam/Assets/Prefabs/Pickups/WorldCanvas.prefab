@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 5851269468757625810}
   - component: {fileID: 3930233975127715841}
   - component: {fileID: 7872804119214189123}
+  - component: {fileID: 1486440810685973260}
   m_Layer: 5
   m_Name: WorldCanvas
   m_TagString: Untagged
@@ -84,7 +85,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 1
+  m_PresetInfoIsWorld: 0
 --- !u!114 &7872804119214189123
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -102,6 +103,19 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &1486440810685973260
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 604711733291628568}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa3a4a1553f1bd14c8ac46daadd7be07, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MilestoneText
+  distanceText: {fileID: 6628363670618357527}
 --- !u!1001 &6740675008247064098
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -159,6 +173,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: dd64121760bcb5042a06c7fd01704347, type: 3}
+--- !u!114 &6628363670618357527 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 465873621263636789, guid: dd64121760bcb5042a06c7fd01704347, type: 3}
+  m_PrefabInstance: {fileID: 6740675008247064098}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
 --- !u!4 &7486844860766579726 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4210071319042591276, guid: dd64121760bcb5042a06c7fd01704347, type: 3}
