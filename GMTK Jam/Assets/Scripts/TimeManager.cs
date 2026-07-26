@@ -7,6 +7,7 @@ public class TimeManager : MonoBehaviour
     [SerializeField] private float startingTime; 
     [SerializeField] private float lowTimeThreshold; 
     [SerializeField] private Color lowTimeColor; 
+    private Color originalTextColor; 
     private float currentTime;
     private float totalTime = 0;
     public float TotalTime { get { return totalTime; } }
@@ -47,6 +48,7 @@ public class TimeManager : MonoBehaviour
 
     void Start()
     {
+        originalTextColor = timeText.color; 
         currentTime = startingTime; 
         playerMovement = FindAnyObjectByType<PlayerMovement>();
 
@@ -123,6 +125,10 @@ public class TimeManager : MonoBehaviour
     public void AddTime(float time){
         currentTime += time; 
         UpdateTime();
+
+        if(currentTime > lowTimeThreshold){
+            timeText.color = originalTextColor;
+       }
     }
 
     #endregion
