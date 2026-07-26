@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &6147677588578898689
+--- !u!1 &3108796897514373068
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,48 +8,46 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 2693975906688806489}
-  - component: {fileID: 370999296129134170}
-  - component: {fileID: 6558397538090197391}
-  - component: {fileID: 1501318752316144909}
-  - component: {fileID: 1571458901332168548}
-  m_Layer: 0
-  m_Name: Extra Time Pickup
+  - component: {fileID: 476702208447685273}
+  - component: {fileID: 636008963557625921}
+  - component: {fileID: 3465433876199338702}
+  m_Layer: 9
+  m_Name: Model
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &2693975906688806489
+--- !u!4 &476702208447685273
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6147677588578898689}
+  m_GameObject: {fileID: 3108796897514373068}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.19200197, y: 0.9794356, z: 0.057727627, w: 0.02255356}
-  m_LocalPosition: {x: -0.9529836, y: 0.45249468, z: -4.17854}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: -0.19200371, y: 0.9794351, z: 0.05773026, w: 0.02255647}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1.3, y: 1.3, z: 1.3000001}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 4983396941704569444}
   m_LocalEulerAnglesHint: {x: -6.993, y: 178.729, z: -22.105}
---- !u!33 &370999296129134170
+--- !u!33 &636008963557625921
 MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6147677588578898689}
+  m_GameObject: {fileID: 3108796897514373068}
   m_Mesh: {fileID: 4300000, guid: fc3fca7eb132af346af376a65071f165, type: 3}
---- !u!23 &6558397538090197391
+--- !u!23 &3465433876199338702
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6147677588578898689}
+  m_GameObject: {fileID: 3108796897514373068}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -92,13 +90,64 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!136 &1501318752316144909
+--- !u!1 &8850975131133653561
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4983396941704569444}
+  - component: {fileID: 6363492953132192362}
+  - component: {fileID: 2500656502456015595}
+  m_Layer: 0
+  m_Name: Extra Time Pickup
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4983396941704569444
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8850975131133653561}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 476702208447685273}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6363492953132192362
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8850975131133653561}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 98dfe6b1587d6234f95748a81a03d5ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ExtraTime
+  pickupSFX: {fileID: 8300000, guid: e21a8f65e2d9d9e459ee60caf6e7311d, type: 3}
+  SFXVolume: 1
+  pickupIcon: {fileID: 0}
+  powerupDuration: 0
+  timeAdded: 5
+--- !u!136 &2500656502456015595
 CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6147677588578898689}
+  m_GameObject: {fileID: 8850975131133653561}
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -111,23 +160,7 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.23922615
+  m_Radius: 0.36
   m_Height: 0.47845048
   m_Direction: 1
   m_Center: {x: -2.8622937e-15, y: -0.00000008235536, z: 0.026775517}
---- !u!114 &1571458901332168548
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6147677588578898689}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 98dfe6b1587d6234f95748a81a03d5ee, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ExtraTime
-  pickupSFX: {fileID: 0}
-  pickupIcon: {fileID: 0}
-  powerupDuration: 0
-  timeAdded: 5

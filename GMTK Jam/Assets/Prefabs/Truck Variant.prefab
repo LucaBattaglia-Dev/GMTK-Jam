@@ -1682,6 +1682,7 @@ GameObject:
   - component: {fileID: 4513339104094678110}
   - component: {fileID: 7701210098420081094}
   - component: {fileID: 4887477838223595658}
+  - component: {fileID: 3233656903723580554}
   m_Layer: 6
   m_Name: Truck Variant
   m_TagString: Untagged
@@ -1861,7 +1862,29 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TruckDriver
   player: {fileID: 0}
-  moveSpeed: 0.1
+  possibleSpeeds:
+  - 6
+  - 9
+  - 11
+  - 13
   driveForward: 1
   despawnTiles: 35
   tileSize: 5
+--- !u!114 &3233656903723580554
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7640037923345900238}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6296e08c356638c449265151c0dd922a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TruckPowerupAssigner
+  spawnChance: 15
+  powerupPrefabs:
+  - {fileID: 638307264866404510, guid: e5f1554fc79ae754bbde21f6c4d757e5, type: 3}
+  - {fileID: 8850975131133653561, guid: a47184128d416514685246b1737cc99f, type: 3}
+  attachmentPoint: {fileID: 0}
+  localOffset: {x: 0, y: 4, z: 0}

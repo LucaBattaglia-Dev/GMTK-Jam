@@ -1,20 +1,24 @@
-using UnityEngine;
 using DG.Tweening;
+using UnityEngine;
 
 //TODO: finish code to turn off renderer
 //Parent class for pickups, also handles animating them
 public class Pickup : MonoBehaviour
 {
-    [SerializeField] public AudioClip pickupSFX; 
+    [SerializeField] public AudioClip pickupSFX;
+    [SerializeField] public float SFXVolume;
     [SerializeField] public Sprite pickupIcon;
     [SerializeField] public float powerupDuration;
     private float currentDuration;
-    public float CurrentDuration {get{return currentDuration;}}
+    public float CurrentDuration {get{return currentDuration;} set{currentDuration = value;}}
     private bool isActive = false; 
     private float originalYPos;
+    private PickupCooldown cooldownUI;
+    public PickupCooldown CooldownUI {get{return cooldownUI;} set{cooldownUI = value;}}
+    AudioSource audioPlayer;
 
     //Animation Params
-    private float floatDistance = 0.4f;
+    private float floatDistance = 0.8f;
     private float floatDuration = 2f;
 
     #region class methods
@@ -28,6 +32,14 @@ public class Pickup : MonoBehaviour
         floatSequence.SetLoops(-1, LoopType.Yoyo);
     }
 
+    //For when you get a pickup that you already have. Resets the timer and color
+    public void RestartTimer(){
+        currentDuration = powerupDuration;
+        if(cooldownUI){
+            cooldownUI.ResetColor(); 
+        }
+    }
+
     private void OnTriggerEnter(Collider collision){
         PlaySFX();
         isActive = true;
@@ -37,6 +49,7 @@ public class Pickup : MonoBehaviour
     }
 
     public void PlaySFX(){
+        SFXManager.Instance.PlaySFX(pickupSFX, SFXVolume);
     }
 
     void FixedUpdate(){
@@ -44,6 +57,7 @@ public class Pickup : MonoBehaviour
             currentDuration -= Time.unscaledDeltaTime; 
             if(currentDuration <= 0){
                 OnDespawn();
+                LevelUIManager.Instance.RemovePickup(this);
                 Destroy(this.gameObject);
             }
         }
