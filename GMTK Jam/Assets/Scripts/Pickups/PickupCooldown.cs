@@ -32,9 +32,6 @@ public class PickupCooldown : MonoBehaviour
     void Update(){
         if(powerup){
             cooldownCircle.fillAmount = powerup.CurrentDuration/powerup.powerupDuration; 
-            if(powerup.CurrentDuration - Time.deltaTime <= 0){
-                Destroy(this.gameObject);
-            }
         }
     }
     
