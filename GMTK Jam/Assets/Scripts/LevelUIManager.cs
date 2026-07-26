@@ -21,6 +21,7 @@ public class LevelUIManager : MonoBehaviour
     public float Distance {get{return distance;} set{distance = value;}}
     private Transform playerTracker; 
     private Transform player; 
+    public Transform Player {get{return player;}}
     private List<System.Type> currentPickups = new List<System.Type>(); 
     private List<Pickup> currentPickupScripts = new List<Pickup>();
 

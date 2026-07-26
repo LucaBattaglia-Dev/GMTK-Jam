@@ -1887,4 +1887,4 @@ MonoBehaviour:
   - {fileID: 638307264866404510, guid: e5f1554fc79ae754bbde21f6c4d757e5, type: 3}
   - {fileID: 8850975131133653561, guid: a47184128d416514685246b1737cc99f, type: 3}
   attachmentPoint: {fileID: 0}
-  localOffset: {x: 0, y: 4, z: 0}
+  localOffset: {x: 0, y: 4.3, z: 0}
