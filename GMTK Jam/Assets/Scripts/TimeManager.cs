@@ -7,12 +7,11 @@ public class TimeManager : MonoBehaviour
     [SerializeField] private float startingTime; 
     [SerializeField] private float lowTimeThreshold; 
     [SerializeField] private Color lowTimeColor; 
-    private Color originalTextColor; 
     private float currentTime;
     private float totalTime = 0;
     public float TotalTime { get { return totalTime; } }
     private bool gameOver = false; 
-    private bool isCountingDown = false; // Controls when the timer actually starts ticking
+    private bool isCountingDown = false;
 
     [Header("Super Speed Timer Settings")]
     [SerializeField] private float superSpeedTimeMultiplier = 3f; 
@@ -48,7 +47,6 @@ public class TimeManager : MonoBehaviour
 
     void Start()
     {
-        originalTextColor = timeText.color; 
         currentTime = startingTime; 
         playerMovement = FindAnyObjectByType<PlayerMovement>();
 
@@ -57,18 +55,24 @@ public class TimeManager : MonoBehaviour
             defaultTextColor = timeText.color;
         }
 
-        // Display the starting time immediately on screen while waiting for the start line
         UpdateTime();
     }
 
     void FixedUpdate()
     {
-        // Only count down if the game isn't over AND the player has crossed the starting line
         if(!gameOver && isCountingDown){
             float timeMultiplier = 1f;
+
+            // Apply Super Speed multiplier if active (drains 3x faster)
             if (playerMovement != null && playerMovement.IsSuperSpeeding)
             {
                 timeMultiplier = superSpeedTimeMultiplier;
+            }
+
+            // Apply TimeWarp / Slow-mo multiplier if active (e.g., 0.1f for 10x slow down)
+            if (TruckDriver.GlobalSpeedMultiplier < 1f)
+            {
+                timeMultiplier *= TruckDriver.GlobalSpeedMultiplier;
             }
 
             currentTime -= Time.deltaTime * timeMultiplier;  
@@ -84,7 +88,6 @@ public class TimeManager : MonoBehaviour
         }
     }
 
-    // Called by the StartingLine script when the player crosses it
     public void StartCountdown()
     {
         isCountingDown = true;
@@ -125,10 +128,6 @@ public class TimeManager : MonoBehaviour
     public void AddTime(float time){
         currentTime += time; 
         UpdateTime();
-
-        if(currentTime > lowTimeThreshold){
-            timeText.color = originalTextColor;
-       }
     }
 
     #endregion

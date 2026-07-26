@@ -85,6 +85,9 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 movingVelocity;
     private Collider lastGround;
 
+    // Time Warp Momentum Tracking
+    private float lastGlobalSpeedMultiplier = 1f;
+
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -92,10 +95,28 @@ public class PlayerMovement : MonoBehaviour
         rb.freezeRotation = true;
         sprintTimer = sprintTime;
         currentSpeed = walkSpeed;
+        lastGlobalSpeedMultiplier = TruckDriver.GlobalSpeedMultiplier;
     }
 
     private void Update()
     {
+        // --- TIME WARP MOMENTUM PRESERVATION ---
+        float currentGlobalSpeed = TruckDriver.GlobalSpeedMultiplier;
+        if (currentGlobalSpeed != lastGlobalSpeedMultiplier)
+        {
+            if (currentGlobalSpeed < 1f && lastGlobalSpeedMultiplier >= 1f)
+            {
+                rb.linearVelocity *= currentGlobalSpeed;
+            }
+            else if (currentGlobalSpeed >= 1f && lastGlobalSpeedMultiplier < 1f)
+            {
+                rb.linearVelocity /= lastGlobalSpeedMultiplier;
+            }
+            lastGlobalSpeedMultiplier = currentGlobalSpeed;
+        }
+
+        float timeMultiplier = currentGlobalSpeed;
+
         // Ground detection
         grounded = Physics.Raycast(transform.position, Vector3.down, out groundHit, playerHeight * 0.5f + 0.3f, whatIsGround);
         if (groundHit.collider != null && (lastGround == null || groundHit.collider == lastGround))
@@ -131,16 +152,16 @@ public class PlayerMovement : MonoBehaviour
 
             if (state == MovementState.SuperSpeed)
             {
-                superSpeedHoldTimer += Time.deltaTime;
+                superSpeedHoldTimer += Time.deltaTime * timeMultiplier;
                 superSpeedDrainMultiplier = 1f + (superSpeedHoldTimer * superSpeedHoldTimer * superSpeedDrainGrowthRate);
                 
-                sprintTimer -= Time.deltaTime * superSpeedDrainMultiplier;
+                sprintTimer -= Time.deltaTime * timeMultiplier * superSpeedDrainMultiplier;
             }
             else
             {
                 superSpeedHoldTimer = 0f;
                 superSpeedDrainMultiplier = 1f;
-                sprintTimer -= Time.deltaTime * 0.9f;
+                sprintTimer -= Time.deltaTime * timeMultiplier * 0.9f;
             }
 
             if (sprintTimer <= 0f)
@@ -148,7 +169,7 @@ public class PlayerMovement : MonoBehaviour
                 if (state == MovementState.SuperSpeed)
                 {
                     IsExhausted = true;
-                    exhaustionTimer = 1.5f; // Lasts 1.5 seconds now
+                    exhaustionTimer = 1.5f; 
                 }
                 sprintTimer = 0f;
             }
@@ -164,7 +185,7 @@ public class PlayerMovement : MonoBehaviour
             }
             else if (regenDelayTimer > 0f)
             {
-                regenDelayTimer -= Time.deltaTime;
+                regenDelayTimer -= Time.deltaTime * timeMultiplier;
             }
 
             if (regenDelayTimer <= 0f)
@@ -173,14 +194,14 @@ public class PlayerMovement : MonoBehaviour
 
                 if (IsExhausted)
                 {
-                    currentRegenRate *= 0.25f; // 50% slower than the previous penalty rate
-                    exhaustionTimer -= Time.deltaTime;
+                    currentRegenRate *= 0.25f; 
+                    exhaustionTimer -= Time.deltaTime * timeMultiplier;
                     
                     if (exhaustionTimer <= 0f) 
                         IsExhausted = false;
                 }
 
-                sprintTimer += Time.deltaTime * currentRegenRate;
+                sprintTimer += Time.deltaTime * timeMultiplier * currentRegenRate;
                 if (sprintTimer >= sprintTime)
                     sprintTimer = sprintTime;
             }
@@ -190,7 +211,17 @@ public class PlayerMovement : MonoBehaviour
     private void FixedUpdate()
     {
         if (state == MovementState.WallRunning) WallRunMovement();
-        else MovePlayer();
+        else 
+        {
+            MovePlayer();
+
+            // Scale gravity to s^2 during Time Warp so the jump arc stretches symmetrically to the same height
+            if (!grounded && TruckDriver.GlobalSpeedMultiplier < 1f)
+            {
+                float s = TruckDriver.GlobalSpeedMultiplier;
+                rb.AddForce(-Physics.gravity * (1f - (s * s)), ForceMode.Acceleration);
+            }
+        }
     }
 
     private void GetInput()
@@ -209,10 +240,12 @@ public class PlayerMovement : MonoBehaviour
 
     private void StateHandler()
     {
+        float timeMultiplier = TruckDriver.GlobalSpeedMultiplier;
+
         if ((wallLeft || wallRight) && verticalInput > 0 && !grounded)
         {
             if (state != MovementState.WallRunning) StartWallRun();
-            wallRunTimer -= Time.deltaTime;
+            wallRunTimer -= Time.deltaTime * timeMultiplier;
             if (wallRunTimer <= 0) StopWallRun();
             if (Input.GetButtonDown("Jump")) WallJump();
         }
@@ -258,7 +291,7 @@ public class PlayerMovement : MonoBehaviour
                 currentSpeed = targetSpeed;
         }
 
-        float speed = currentSpeed;
+        float speed = currentSpeed * TruckDriver.GlobalSpeedMultiplier;
 
         if (OnSlope())
         {
@@ -291,7 +324,12 @@ public class PlayerMovement : MonoBehaviour
             Vector3 totalVelocity = rb.linearVelocity + movingVelocity;
             rb.linearVelocity = totalVelocity;
         }
-        rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
+        
+        // Scale jump force by time multiplier so the initial velocity matches the height target for slow-mo
+        float timeMultiplier = TruckDriver.GlobalSpeedMultiplier;
+        float jumpScale = (timeMultiplier < 1f) ? timeMultiplier : 1f;
+
+        rb.AddForce(transform.up * jumpForce * jumpScale, ForceMode.Impulse);
     }
 
     public bool OnSlope()
@@ -328,7 +366,9 @@ public class PlayerMovement : MonoBehaviour
         Vector3 wallNormal = wallRight ? rightWallHit.normal : leftWallHit.normal;
         Vector3 wallForward = Vector3.Cross(wallNormal, transform.up);
         if ((transform.forward - wallForward).magnitude > (transform.forward - -wallForward).magnitude) wallForward = -wallForward;
-        rb.AddForce(wallForward * wallRunSpeedForce, ForceMode.Force);
+        
+        float timeMultiplier = TruckDriver.GlobalSpeedMultiplier;
+        rb.AddForce(wallForward * wallRunSpeedForce * timeMultiplier, ForceMode.Force);
         rb.AddForce(-wallNormal * 100f, ForceMode.Force);
     }
 
